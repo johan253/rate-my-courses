@@ -6,7 +6,8 @@ import {Route, BrowserRouter as Router, Routes} from 'react-router-dom';
 // import {useState} from "react";
 // import Navbar from './components/Navbar'
 // import Rating from "@/app/components/Rating";
-import HomePage from "@/app/components/HomePage";
+import HomePage from "@/app/pages/HomePage";
+import SearchPage from "@/app/pages/SearchPage";
 
 
 export default function Home() {
@@ -16,7 +17,7 @@ export default function Home() {
       <Router>
           <Routes>
               <Route path={"/"} element={<HomePage/>}/>
-              <Route path={"/about"} element={'About'}/>
+              <Route path={"/search/:type"} element={<SearchPage/>}/>
           </Routes>
       </Router>
     </main>
