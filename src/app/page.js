@@ -4,21 +4,21 @@ import React, {useRef, useState} from 'react';
 import { AiOutlineMenu } from "react-icons/ai";
 import Image from "next/image";
 import BGImage from "../assets/home-bg.png";
-import Search from "./search/[query]/page";
+import Search from "./search/page";
 import { useRouter } from 'next/navigation';
+import Link from "next/link";
 function HomePage() {
     const router = useRouter();
     const [search, setSearch] = useState("");
 
-    // if (submit) {
-    //     return (
-    //         <Navigate to={`/search/${search}`} state={{query: search.toLowerCase()}}/>
-    //     )
-    // }
-
     const handleSearch = (e) => {
         e.preventDefault()
-        router.push(`/search/${search}`)
+        router.push({
+            pathname: '/search',
+            query: {
+                q: search,
+            },
+        },)
     }
     return (
         <main className={"text-black"}>
@@ -34,12 +34,19 @@ function HomePage() {
                 <div className={"opacity-50 absolute bg-lime-300 inset-0 m-3 justify-center p-10 block"}>
                     <h1 className={"w-full text-center m-5 text-5xl font-bold"}>Rate My Courses</h1>
                     <p className={"m-3"}>Browse for courses you are considering taking and write reviews for others to see!</p>
-                    <form onSubmit={handleSearch}>
-                        <input className={"h-12 w-full my-auto rounded-3xl p-3"}
+                    <input className={"h-12 w-full my-auto rounded-3xl p-3"}
                                placeholder={"Search for a course..."}
                                value={search}
-                               onChange={e => setSearch(e.target.value)}/>
-                    </form>
+                           onChange={e => setSearch(e.target.value)}/>
+                    <Link href={{
+                        pathname: '/search',
+                        query: {
+                            q: search
+                        }
+                    }}>
+                        Submit
+                    </Link>
+
                 </div>
             </div>
             {/* //TODO add more here later */}

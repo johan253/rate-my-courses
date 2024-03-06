@@ -1,10 +1,41 @@
-import React from 'react';
-import Home from '../page'
+"use client"
 
-const EmptySearch = () => {
+import React, {useEffect, useState} from 'react';
+import Navbar from "@/components/Navbar";
+import { db } from "@/firebaseConfig"
+import { collection, addDoc, getDoc, getDocs} from "firebase/firestore"
+import {useSearchParams} from "next/navigation";
+
+function Search(props) {
+    const search = useSearchParams().get('q');
+
+    const [courses, setCourses] = useState([])
+
+    const fetchData = async () => {
+        await getDocs(collection(db, 'courses'))
+            .then((qs) => {
+                const newData = qs.docs
+                    .map((doc) => ({...doc.data(), id:doc.id}))
+                setCourses(newData);
+                console.log(courses, newData)
+            });
+    }
+    useEffect(() => {
+        fetchData();
+    }, []);
     return (
-        <Home/>
-    );
-};
+        <main className={"bg-white"}>
+            <Navbar/>
+            <div className={"bg-red-800 text-white p-8 max-w-full"}>
+                {search}
+            </div>
+            <div className={"bg-white text-xl text-red-700 w-32 h-32"}>
+                {courses.map(c => c.name)}
+            </div>
 
-export default EmptySearch;
+        </main>
+
+    );
+}
+
+export default Search;

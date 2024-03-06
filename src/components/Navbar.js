@@ -1,5 +1,7 @@
-import {NavLink, Route} from "react-router-dom";
+"use client";
+
 import {useState} from "react";
+import Link from "next/link";
 export default function Navbar() {
     const [search, setSearch] = useState("");
     function changeSearch(e) {
@@ -11,11 +13,11 @@ export default function Navbar() {
     }
     return(
         <header className={"bg-black flex justify-between p-3"}>
-            <NavLink to={"/"} className={"items-center justify-center font-extrabold text-xl"}>
+            <Link href={"/"} className={"items-center justify-center font-extrabold text-xl"}>
                 <p className={"text-transparent bg-clip-text bg-gradient-to-b from-white to-neutral-400"}>
                     Rate My Courses
                 </p>
-            </NavLink>
+            </Link>
             <form action={handleSearch} className={"justify-end w-1/2"}>
                 <input className={"text-black px-2 py-1 rounded-3xl w-full"} placeholder={"Search for a course"}
                        value={search} onChange={changeSearch}/>
