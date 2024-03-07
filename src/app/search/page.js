@@ -7,7 +7,7 @@ import { collection, addDoc, getDoc, getDocs} from "firebase/firestore"
 import {useSearchParams} from "next/navigation";
 
 function Search(props) {
-    const search = useSearchParams().get('q');
+    const search = useSearchParams().get('q').toLowerCase();
 
     const [courses, setCourses] = useState([])
 
@@ -16,7 +16,7 @@ function Search(props) {
             .then((qs) => {
                 const newData = qs.docs
                     .map((doc) => ({...doc.data(), id:doc.id}))
-                setCourses(newData);
+                setCourses(newData.filter(d => d.name.toLowerCase().includes(search)));
                 console.log(courses, newData)
             });
         //courses.filter(c => c.name.)
