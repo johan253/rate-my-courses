@@ -4,24 +4,17 @@ import React, {useRef, useState} from 'react';
 import { AiOutlineMenu } from "react-icons/ai";
 import Image from "next/image";
 import BGImage from "../assets/home-bg.png";
-import Search from "./search/page";
-import { useRouter } from 'next/navigation';
 import Link from "next/link";
 function HomePage() {
-    const router = useRouter();
+    const linkRef = useRef(null);
     const [search, setSearch] = useState("");
 
     const handleSearch = (e) => {
         e.preventDefault()
-        router.push({
-            pathname: '/search',
-            query: {
-                q: search,
-            },
-        },)
+        linkRef.current.click()
     }
     return (
-        <main className={"text-black"}>
+        <main className={"text-black bg-white"}>
             <nav className={" p-5 bg-red-300"}>
                 <AiOutlineMenu className={"ml-auto scale-150"}/>
             </nav>
@@ -34,22 +27,22 @@ function HomePage() {
                 <div className={"opacity-50 absolute bg-lime-300 inset-0 m-3 justify-center p-10 block"}>
                     <h1 className={"w-full text-center m-5 text-5xl font-bold"}>Rate My Courses</h1>
                     <p className={"m-3"}>Browse for courses you are considering taking and write reviews for others to see!</p>
-                    <input className={"h-12 w-full my-auto rounded-3xl p-3"}
+                    <form onSubmit={handleSearch} className={"bg-red-800 flex"}>
+                        <input className={"h-12 w-full my-auto rounded-l-3xl p-3"}
                                placeholder={"Search for a course..."}
                                value={search}
-                           onChange={e => setSearch(e.target.value)}/>
-                    <Link href={{
-                        pathname: '/search',
-                        query: {
-                            q: search
-                        }
-                    }}>
-                        Submit
-                    </Link>
-
+                               onChange={e => setSearch(e.target.value)}/>
+                        <Link href={{pathname: '/search', query: {q: search}}} ref={linkRef}
+                            className={"bg-black p-3 text-white rounded-r-3xl"}>
+                            Submit
+                        </Link>
+                    </form>
                 </div>
             </div>
             {/* //TODO add more here later */}
+            <section className={"bg-pink-200 p-5"}>
+                Add more here later
+            </section>
         </main>
     );
 }

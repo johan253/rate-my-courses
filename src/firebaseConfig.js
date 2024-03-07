@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"
-import key from "../.env"
+import API_KEY from "../.env"
 
 const firebaseConfig = {
-    apiKey: key,
+    apiKey: API_KEY,
     authDomain: "rate-my-course-0.firebaseapp.com",
     projectId: "rate-my-course-0",
     storageBucket: "rate-my-course-0.appspot.com",

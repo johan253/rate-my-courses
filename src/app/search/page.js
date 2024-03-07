@@ -19,6 +19,7 @@ function Search(props) {
                 setCourses(newData);
                 console.log(courses, newData)
             });
+        //courses.filter(c => c.name.)
     }
     useEffect(() => {
         fetchData();
