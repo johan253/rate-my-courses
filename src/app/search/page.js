@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { db } from "@/firebaseConfig"
 import { collection, addDoc, getDoc, getDocs} from "firebase/firestore"
 import {useSearchParams} from "next/navigation";
+import CourseCard from "@/components/CourseCard";
 
 function Search(props) {
     const search = useSearchParams().get('q').toLowerCase();
@@ -24,15 +25,16 @@ function Search(props) {
     useEffect(() => {
         fetchData();
     }, []);
+    const cards = courses.map(c => <CourseCard key={c.name} course={c}/>)
     return (
         <main className={"bg-white"}>
             <Navbar/>
-            <div className={"bg-red-800 text-white p-8 max-w-full"}>
-                {search}
+            <div className={"bg-red-800 text-white p-8 max-w-full text-3xl"}>
+                Showing Results For: &quot;{search}&quot;
             </div>
-            <div className={"bg-white text-xl text-red-700 w-32 h-32"}>
-                {courses.map(c => c.name)}
-            </div>
+            <section className={"bg-cyan-300 text-xl w-screen p-4"}>
+                {cards.length !== 0 ? cards : "No results found..."}
+            </section>
 
         </main>
 

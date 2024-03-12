@@ -1,13 +1,33 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import { db } from '../firebaseConfig';
+import {collection, getDoc, getDocs} from "firebase/firestore";
 function CourseCard(props) {
+    const [school, setSchool] = useState({});
+    async function getSchool() {
+        await getDoc(props.course.school)
+            .then(ds => {
+                setSchool(ds.data())
+                console.log(school)
+            })
+    }
+    const allRatings = props.course.ratings.map(r => r.rating);
+    let average = allRatings.reduce((ps, c) => ps + c, 0)
+    average /= allRatings.length;
+    useEffect(() => {
+        getSchool();
+    }, [])
     return (
-        <div>
-            <h3>
-                {props.name}
+        <div className={"m-5 rounded-3xl shadow-xl max-w-full"}>
+            <h3 className={"p-5 bg-black rounded-t-3xl"}>
+                {props.course.name}
+                <br/>
+                Average Rating: {average}
             </h3>
-            <h4>
-                {}
-            </h4>
+            <p>
+                At {school.name}
+                <br/>
+                {school.location}
+            </p>
         </div>
     );
 }
