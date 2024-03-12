@@ -17,13 +17,13 @@ function CourseCard(props) {
         getSchool();
     }, [])
     return (
-        <div className={"m-5 rounded-3xl shadow-xl max-w-full"}>
-            <h3 className={"p-5 bg-black rounded-t-3xl"}>
+        <div className={"m-5 rounded-3xl shadow-xl max-w-screen-md"}>
+            <h3 className={"p-4 bg-black rounded-t-3xl"}>
                 {props.course.name}
                 <br/>
                 Average Rating: {average}
             </h3>
-            <p>
+            <p className={"p-4 text-black"}>
                 At {school.name}
                 <br/>
                 {school.location}

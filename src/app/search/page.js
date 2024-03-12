@@ -1,13 +1,16 @@
 "use client"
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Navbar from "@/components/Navbar";
 import { db } from "@/firebaseConfig"
 import { collection, addDoc, getDoc, getDocs} from "firebase/firestore"
 import {useSearchParams} from "next/navigation";
 import CourseCard from "@/components/CourseCard";
+import Footer from "@/components/Footer";
+import Link from "next/link";
 
 function Search(props) {
+    const createRef = useRef(null)
     const search = useSearchParams().get('q').toLowerCase();
 
     const [courses, setCourses] = useState([])
@@ -35,7 +38,19 @@ function Search(props) {
             <section className={"bg-cyan-300 text-xl w-screen p-4"}>
                 {cards.length !== 0 ? cards : "No results found..."}
             </section>
+            <section className={"bg-pink-300 text-black p-6"}>
+                <p className={""}>
+                    Cant find what you&rsquo;re looking for?
+                </p>
+                <div className={"my-6"}>
+                    <Link href={"../create"} className={"bg-black text-white rounded-3xl p-5"}
+                          ref={createRef}>
+                        Add course
+                    </Link>
+                </div>
 
+            </section>
+            <Footer/>
         </main>
 
     );
