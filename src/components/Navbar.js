@@ -1,15 +1,17 @@
 "use client";
 
-import {useState} from "react";
+import {useRef, useState} from "react";
 import Link from "next/link";
 export default function Navbar() {
+    const linkRef = useRef(null)
     const [search, setSearch] = useState("");
     function changeSearch(e) {
         setSearch(e.target.value);
     }
     //TODO: implement course search and possibly autofill
     function handleSearch(e) {
-        console.log(search);
+        e.preventDefault()
+        linkRef.current.click()
     }
     return(
         <header className={"bg-black flex justify-between p-3"}>
@@ -18,10 +20,12 @@ export default function Navbar() {
                     Rate My Courses
                 </p>
             </Link>
-            <form action={handleSearch} className={"justify-end w-1/2"}>
+            <form onSubmit={handleSearch} className={"justify-end w-1/2"}>
                 <input className={"text-black px-2 py-1 rounded-3xl w-full"} placeholder={"Search for a course"}
                        value={search} onChange={changeSearch}/>
             </form>
+            <Link href={{pathname: '/search', query: {q: search}}} ref={linkRef}
+                  className={"hidden"}/>
         </header>
     )
 }
