@@ -7,7 +7,7 @@ function CourseCard(props) {
         await getDoc(props.course.school)
             .then(ds => {
                 setSchool(ds.data())
-                console.log(school)
+                console.log("getDoc for school: \n", school)
             })
     }
     const allRatings = props.course.ratings.map(r => r.rating);
@@ -18,7 +18,7 @@ function CourseCard(props) {
     }, [])
     return (
         <div className={"m-5 rounded-3xl shadow-xl max-w-screen-md"}>
-            <h3 className={"p-4 bg-black rounded-t-3xl"}>
+            <h3 className={"p-4 bg-black rounded-t-3xl text-white"}>
                 {props.course.name}
                 <br/>
                 Average Rating: {average}

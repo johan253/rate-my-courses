@@ -9,7 +9,9 @@ import CourseCard from "@/components/CourseCard";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 
+
 function Search(props) {
+    const [loading, setLoading] = useState(true)
     const createRef = useRef(null)
     const search = useSearchParams().get('q').toLowerCase();
 
@@ -21,9 +23,10 @@ function Search(props) {
                 const newData = qs.docs
                     .map((doc) => ({...doc.data(), id:doc.id}))
                 setCourses(newData.filter(d => d.name.toLowerCase().includes(search)));
-                console.log(courses, newData)
+                console.log("after getDocs in search: \n",courses, newData)
+
             });
-        //courses.filter(c => c.name.)
+        setLoading(false)
     }
     useEffect(() => {
         fetchData();
@@ -35,8 +38,12 @@ function Search(props) {
             <div className={"bg-red-800 text-white p-8 max-w-full text-3xl"}>
                 Showing Results For: &quot;{search}&quot;
             </div>
-            <section className={"bg-cyan-300 text-xl w-screen p-4"}>
-                {cards.length !== 0 ? cards : "No results found..."}
+            <section className={"bg-cyan-300 text-xl w-screen p-4 text-black"}>
+                {
+                    loading ? "loading courses..." :
+                        cards.length !== 0 ? cards : "No results found"
+                }
+                {/*cards.length !== 0 ? cards : "No results found..."*/}
             </section>
             <section className={"bg-pink-300 text-black p-6"}>
                 <p className={""}>
