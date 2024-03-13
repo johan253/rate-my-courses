@@ -18,6 +18,7 @@ function Search(props) {
     const [courses, setCourses] = useState([])
 
     const fetchData = async () => {
+        setLoading(true)
         await getDocs(collection(db, 'courses'))
             .then((qs) => {
                 const newData = qs.docs
@@ -38,7 +39,7 @@ function Search(props) {
             <div className={"bg-red-800 text-white p-8 max-w-full text-3xl"}>
                 Showing Results For: &quot;{search}&quot;
             </div>
-            <section className={"bg-cyan-300 text-xl w-screen p-4 text-black"}>
+            <section className={"bg-cyan-300 text-xl w-full p-4 text-black min-h-96"}>
                 {
                     loading ? "loading courses..." :
                         cards.length !== 0 ? cards : "No results found"
