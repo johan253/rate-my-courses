@@ -2,8 +2,8 @@
 
 import React, {useEffect, useRef, useState} from 'react';
 import Navbar from "@/components/Navbar";
-import { db } from "@/firebaseConfig"
-import { collection, addDoc, getDoc, getDocs} from "firebase/firestore"
+import { app } from "@/firebaseConfig"
+import {collection, getDocs, getFirestore} from "firebase/firestore"
 import {useSearchParams} from "next/navigation";
 import CourseCard from "@/components/CourseCard";
 import Footer from "@/components/Footer";
@@ -14,6 +14,7 @@ function Search(props) {
     const [loading, setLoading] = useState(true)
     const createRef = useRef(null)
     const search = useSearchParams().get('q').toLowerCase();
+    const db = getFirestore(app);
 
     const [courses, setCourses] = useState([])
 
@@ -44,14 +45,13 @@ function Search(props) {
                     loading ? "loading courses..." :
                         cards.length !== 0 ? cards : "No results found"
                 }
-                {/*cards.length !== 0 ? cards : "No results found..."*/}
             </section>
             <section className={"bg-pink-300 text-black p-6"}>
-                <p className={""}>
+                <p>
                     Cant find what you&rsquo;re looking for?
                 </p>
                 <div className={"my-6"}>
-                    <Link href={"../create"} className={"bg-black text-white rounded-3xl p-5"}
+                    <Link href={{pathname:"../add", query: {q: "course"}}} className={"bg-black text-white rounded-3xl p-5"}
                           ref={createRef}>
                         Add course
                     </Link>
