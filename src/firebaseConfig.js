@@ -1,12 +1,9 @@
 import { initializeApp } from "firebase/app";
 
-require('dotenv').config()
-const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
-console.log(REACT_APP_API_KEY)
+const API_KEY = process.env.API_KEY
 
 const firebaseConfig = {
-    // TODO REMOVE API KEY
-    // apiKey: REACT_APP_API_KEY,
+    apiKey: API_KEY,
     authDomain: "rate-my-course-0.firebaseapp.com",
     projectId: "rate-my-course-0",
     storageBucket: "rate-my-course-0.appspot.com",
@@ -17,4 +14,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export {app};
+export default app;

@@ -1,8 +1,8 @@
 'use client'
 import React, {useRef, useState} from 'react';
 import Navbar from "@/components/Navbar";
-import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from 'firebase/auth'
-import {app} from '@/firebaseConfig'
+import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from 'firebase/auth';
+import app from '@/firebaseConfig';
 import {AiFillGoogleCircle} from "react-icons/ai";
 import {useSearchParams} from "next/navigation";
 import Footer from "@/components/Footer";

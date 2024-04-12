@@ -2,32 +2,23 @@
 
 import React, {useEffect, useRef, useState} from 'react';
 import Navbar from "@/components/Navbar";
-import { app } from "@/firebaseConfig"
-import {collection, getDocs, getFirestore} from "firebase/firestore"
 import {useSearchParams} from "next/navigation";
 import CourseCard from "@/components/CourseCard";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+
+import FirestoreDriver  from "../../DatabaseDriver";
 
 
 function Search(props) {
     const [loading, setLoading] = useState(true)
     const createRef = useRef(null)
     const search = useSearchParams().get('q').toLowerCase();
-    const db = getFirestore(app);
-
     const [courses, setCourses] = useState([])
 
     const fetchData = async () => {
         setLoading(true)
-        await getDocs(collection(db, 'courses'))
-            .then((qs) => {
-                const newData = qs.docs
-                    .map((doc) => ({...doc.data(), id:doc.id}))
-                setCourses(newData.filter(d => d.name.toLowerCase().includes(search)));
-                console.log("after getDocs in search: \n",courses, newData)
-
-            });
+        setCourses(await FirestoreDriver.searchCourse(search));
         setLoading(false)
     }
     useEffect(() => {
