@@ -30,9 +30,9 @@ const CoursePage = () => {
     useEffect(() => {
         if (course && course.ratings) {
             const cards = course.ratings.map((r, index) => (
-                <div key={index} className="bg-blue-500 border-black border-2 m-1.5 p-5 rounded-md">
-                    <h2 className="text-xl font-semibold">{r.rating}</h2>
-                    <p className="text-gray-800">{r.review}</p>
+                <div key={index} className="bg-neutral-300 shadow-lg p-6 rounded-lg animate__animated animate__fadeIn">
+                    <h2 className="text-lg font-semibold mb-2">{r.rating}</h2>
+                    <p className="text-gray-700">{r.review}</p>
                 </div>
             ));
             setRatingCards(cards);
@@ -44,17 +44,41 @@ const CoursePage = () => {
     const courseLocation = school.location || '';
 
     return (
-        <div className="bg-white text-black min-h-screen">
-            <Navbar />
-            <section className="container mx-auto mt-8">
-                <h1 className="text-3xl font-semibold">{courseName}</h1>
-                <h2 className="text-lg font-medium text-gray-700">{courseSchool}</h2>
-                <h3 className="text-sm font-medium text-gray-500">{courseLocation}</h3>
+        <div className="bg-white text-black min-h-screen flex flex-col">
+            <Navbar/>
+            <section className="container mx-auto flex-grow mt-8">
+                <h1 className="text-3xl font-bold mb-2">{courseName}</h1>
+                <h2 className="text-lg font-medium mb-1">{courseSchool}</h2>
+                <h3 className="text-sm mb-4">{courseLocation}</h3>
             </section>
-            <section className="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ratingCards}
+            <section className="container mx-auto flex-grow mt-8 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {ratingCards}
+                </div>
             </section>
-            <Footer />
+            <div className="bg-gray-200 text-black py-4">
+                <div className="container mx-auto">
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                        Rate this Course
+                    </button>
+                </div>
+            </div>
+            <section className="container mx-auto flex-grow mt-8">
+                <h2 className="text-2xl font-semibold mb-4">Similar Classes</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Placeholder for similar classes */}
+                    <div className="bg-gray-200 text-black p-4 rounded">
+                        Similar Class 1
+                    </div>
+                    <div className="bg-gray-200 text-black p-4 rounded">
+                        Similar Class 2
+                    </div>
+                    <div className="bg-gray-200 text-black p-4 rounded">
+                        Similar Class 3
+                    </div>
+                </div>
+            </section>
+            <Footer/>
         </div>
     );
 };
