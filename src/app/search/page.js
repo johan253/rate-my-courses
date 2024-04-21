@@ -24,7 +24,9 @@ function Search(props) {
     useEffect(() => {
         fetchData();
     }, [search]);
-    const cards = courses.map(c => <CourseCard key={c.name} course={c}/>)
+    const cards = courses.map(c =>
+        <CourseCard key={c.name} course={c}/>
+    )
     return (
         <main className={"bg-white"}>
             <Navbar/>
