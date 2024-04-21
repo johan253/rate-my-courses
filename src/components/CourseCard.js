@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import { getDoc } from "firebase/firestore";
 import Link from "next/link";
 import FirestoreDriver from "@/DatabaseDriver";
 import StarRating from "@/components/StarRating";

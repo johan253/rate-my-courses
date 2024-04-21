@@ -1,4 +1,4 @@
-import {collection, getDoc, getDocs, getFirestore} from "firebase/firestore"
+import {collection, getDoc, getDocs, getFirestore, query, where} from "firebase/firestore"
 import  app  from "./firebaseConfig"
 
 let instance;
@@ -8,18 +8,27 @@ class Driver {
         if (instance) throw new Error("New instance cannot be created of Firestore Driver");
         instance = this;
     }
-    searchCourse = async(search) => {
+    searchCourse = async (search) => {
         let results = [];
+        console.log("SEARCHING course: ", search);
 
-        await getDocs(collection(db, 'courses')).then((qs) => {
-            qs.docs.map((doc) => ({...doc.data(), id:doc.id}))
-                .filter(classDoc => classDoc.name.toLowerCase().includes(search.toLowerCase()))
-                ?.forEach(course => results.push(course));
-        })
-        if(!results) results = [];
+        // Construct a query to filter courses based on the search criteria
+        const q = query(collection(db, 'courses'),
+            where("name", ">=", search.toUpperCase()),
+            where("name", "<=", search.toUpperCase() + '\uf8ff')
+        );
+
+        // Execute the query and retrieve matching documents
+        await getDocs(q).then((qs) => {
+            qs.forEach((doc) => {
+                results.push({ ...doc.data(), id: doc.id });
+            });
+        });
+
         return results;
-    }
+    };
     getCourse = async(crs) => {
+        console.log("GETTING course: ", crs)
         return (await this.searchCourse(crs)).pop()
     }
     getSchoolFromRef = async(school) => {
