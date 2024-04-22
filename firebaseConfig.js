@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 
-const API_KEY = process.env.API_KEY
-
+const KEY = process.env.API_KEY
 const firebaseConfig = {
-    apiKey: API_KEY,
+    apiKey: KEY,
     authDomain: "rate-my-course-0.firebaseapp.com",
     projectId: "rate-my-course-0",
     storageBucket: "rate-my-course-0.appspot.com",
@@ -14,4 +13,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-export default app;
+export { app };

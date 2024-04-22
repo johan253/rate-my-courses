@@ -2,7 +2,7 @@
 import React, {useRef, useState} from 'react';
 import Navbar from "@/components/Navbar";
 import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from 'firebase/auth';
-import app from '@/firebaseConfig';
+import { app } from '/firebaseConfig';
 import {AiFillGoogleCircle} from "react-icons/ai";
 import {useSearchParams} from "next/navigation";
 import Footer from "@/components/Footer";
@@ -12,9 +12,10 @@ const Login = (props) => {
     const linkRef = useRef(null)
     const [loading, setLoading] = useState(Boolean)
     const provider = new GoogleAuthProvider();
-    const auth = getAuth(app)
+    const auth = getAuth()
     const [loggedIn, setLoggedIn] = useState(Boolean)
     const targetPage = useSearchParams().get('q')?.toLowerCase();
+    const targetCourse = useSearchParams().get('course')?.toLowerCase()
     const handleLogin = async() => {
         await signInWithRedirect(auth, provider)
         getRedirectResult(auth).then(result => {
@@ -48,7 +49,10 @@ const Login = (props) => {
                         </button>
                     </div>
             }
-            <Link href={targetPage !== undefined ? `/add/${targetPage}` : "/"} className={"hidden"} ref={linkRef}/>
+            <Link href={targetPage !== undefined ?
+                targetCourse !== undefined ? {pathname:"/add/review", query: {q: targetCourse}}
+                    : `/add/${targetPage}`
+                : "/"} className={"hidden"} ref={linkRef}/>
             <Footer/>
         </main>
     )

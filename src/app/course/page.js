@@ -5,7 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import FirestoreDriver from '../../DatabaseDriver';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import StarRating from '@/components/StarRating'; // Import the StarRating component
+import StarRating from '@/components/StarRating';
+import Link from "next/link"; // Import the StarRating component
 
 const CoursePage = () => {
     const queue = useSearchParams().get('q').toLowerCase();
@@ -13,6 +14,10 @@ const CoursePage = () => {
     const [school, setSchool] = useState({});
     const [ratingCards, setRatingCards] = useState([]);
     const [averageRating, setAverageRating] = useState(0); // State for average rating
+    //
+    // const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+    // const [userReview, setUserReview] = useState(''); // State for user review
+    // const [userRating, setUserRating] = useState(0); // State for user rating
 
     const getData = async () => {
         const fetchedCourse = await FirestoreDriver.getCourse(queue);
@@ -50,6 +55,23 @@ const CoursePage = () => {
     const courseSchool = school.name || '';
     const courseLocation = school.location || '';
 
+    // const handleModalOpen = () => {
+    //     setIsModalOpen(true);
+    // };
+    //
+    // const handleModalClose = () => {
+    //     setIsModalOpen(false);
+    // };
+    //
+    // const handleReviewSubmit = async () => {
+    //     // Implement logic to submit the review
+    //     console.log('Review submitted:', userReview, userRating);
+    //     setIsModalOpen(false);
+    // };
+    const handleRateClick = (e) => {
+        e.preventDefault();
+    }
+
     return (
         <div className="bg-white text-black min-h-screen flex flex-col">
             <Navbar />
@@ -66,9 +88,9 @@ const CoursePage = () => {
             </section>
             <div className="py-4">
                 <div className="container mx-auto">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <Link href={{pathname:"../add", query: {q: "review", course:courseName}}} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Rate this Course
-                    </button>
+                    </Link>
                 </div>
             </div>
             <section className="container mx-auto flex-grow mt-8">
@@ -87,6 +109,30 @@ const CoursePage = () => {
                 </div>
             </section>
             <Footer />
+
+            {/* Modal for writing review */}
+            {/*{isModalOpen && (*/}
+            {/*    <div className="fixed inset-0 z-10 flex items-center justify-center bg-gray-800 bg-opacity-50">*/}
+            {/*        <div className="bg-white rounded-lg p-8 w-1/2">*/}
+            {/*            <h2 className="text-2xl font-semibold mb-4">Write a Review</h2>*/}
+            {/*            <textarea*/}
+            {/*                value={userReview}*/}
+            {/*                onChange={(e) => setUserReview(e.target.value)}*/}
+            {/*                className="border border-gray-300 rounded-lg p-2 mb-4 w-full h-32"*/}
+            {/*                placeholder="Write your review here..."*/}
+            {/*            />*/}
+            {/*            <StarRating rating={userRating} onRatingChange={setUserRating} />*/}
+            {/*            <div className="mt-4 flex justify-end">*/}
+            {/*                <button onClick={handleModalClose} className="mr-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">*/}
+            {/*                    Cancel*/}
+            {/*                </button>*/}
+            {/*                <button onClick={handleReviewSubmit} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">*/}
+            {/*                    Submit*/}
+            {/*                </button>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 };

@@ -8,7 +8,7 @@ export default function Navbar() {
     function changeSearch(e) {
         setSearch(e.target.value);
     }
-    //TODO: implement course search and possibly autofill
+    //TODO: implement autofill
     function handleSearch(e) {
         e.preventDefault()
         linkRef.current.click()

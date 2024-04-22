@@ -3,7 +3,7 @@ import React, {useRef, useState} from 'react';
 import {getAuth} from "firebase/auth";
 import {collection, getDoc, getDocs, getFirestore} from 'firebase/firestore'
 import Navbar from "@/components/Navbar";
-import {app} from "@/firebaseConfig"
+import {app} from "/firebaseConfig"
 import Link from "next/link";
 import Footer from "@/components/Footer";
 
@@ -17,38 +17,10 @@ const AddCourse = () => {
     const [newCourseLocation, setCourseLocation] = useState("")
 
     const handleCreate = async (e) => {
-        e.preventDefault()
-        if(newCourseName.trim() && newCourseSchool.trim() && newCourseLocation.trim()) {
-            console.log("writing...")
-            const schoolRef = await getSchoolDocReference(newCourseSchool)
-            const data = {
-                name: newCourseName.trim().toUpperCase(),
-                // WARNING: Should not instantiate with reviews, create as made
-                // ratings: [{
-                //     rating: Number,
-                //     review: String,
-                // }],
-                school: schoolRef
-            }
-            //TODO do something with data
-            console.log(data)
-        } else {
-            console.log("invalid!")
-        }
+
     }
-    /**
-     * This method gets the Document Reference for the passes school
-     * @param nameSearch the school being searched
-     * @returns null|DocumentReference<DocumentData, DocumentData>
-     */
     const getSchoolDocReference = async(nameSearch) => {
-        const schools = await getDocs(collection(db, 'schools'))
-        try{
-            return schools.docs.filter(qs =>
-                nameSearch.toLowerCase() === qs.data().name.toLowerCase())[0].ref
-        } catch (e) {
-            return null;
-        }
+
     }
     return (
         <div className={"bg-white text-black"}>

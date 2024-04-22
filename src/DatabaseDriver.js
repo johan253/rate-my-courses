@@ -1,5 +1,5 @@
 import {collection, getDoc, getDocs, getFirestore, query, where} from "firebase/firestore"
-import  app  from "./firebaseConfig"
+import  app  from "../firebaseConfig"
 
 let instance;
 const db = getFirestore(app);
