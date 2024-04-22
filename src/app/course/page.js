@@ -83,7 +83,7 @@ const CoursePage = () => {
             </section>
             <section className="container mx-auto flex-grow mt-8 ">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {ratingCards}
+                    {ratingCards.length !== 0 ? ratingCards : `No reviews for ${courseName} yet, be the first one!`}
                 </div>
             </section>
             <div className="py-4">

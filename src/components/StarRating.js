@@ -2,7 +2,7 @@
 import React from 'react';
 
 const StarRating = ({ rating }) => {
-    const filledStars = Math.floor(rating);
+    const filledStars = Math.floor(rating) || 0;
     const halfStar = rating - filledStars >= 0.5 ? 1 : 0;
     const emptyStars = 5 - filledStars - halfStar;
 

@@ -1,4 +1,4 @@
-import {collection, getDoc, getDocs, getFirestore, query, where} from "firebase/firestore"
+import {collection, doc, getDoc, getDocs, updateDoc, getFirestore, query, where, arrayUnion} from "firebase/firestore"
 import  app  from "../firebaseConfig"
 
 let instance;
@@ -39,6 +39,20 @@ class Driver {
                 out = ds.data()
             })
         return out
+    }
+    writeReviewFromCourse = async(course, data) => {
+        if (!course || !data?.review || !data?.rating) {
+            console.error("WRITE TO DB: failed, not valid course or data")
+            return false;
+        }
+        const courseRef = (await this.getCourse(course)).id
+        await updateDoc(doc(db, 'courses', courseRef), {
+            ratings: arrayUnion({
+                review: data.review,
+                rating: data.rating,
+            })
+        })
+        return true;
     }
 }
 

@@ -7,11 +7,13 @@ import Link from "next/link";
 import {getAuth} from "firebase/auth";
 import {app} from "/firebaseConfig"
 import {useSearchParams} from "next/navigation";
+import FirestoreDriver from "@/DatabaseDriver";
 
 const AddReview = () => {
     const [reviewText, setReviewText] = useState('');
     const [rating, setRating] = useState(1);
     const [userName, setUserName] = useState('')
+    const coursePageRef = useRef(null);
     const homeRef = useRef(null)
     const courseName = useSearchParams().get('q')
     const auth = getAuth();
@@ -19,11 +21,21 @@ const AddReview = () => {
         if (!auth.currentUser) homeRef.current.click()
         setUserName(auth.currentUser?.displayName)
     }, [])
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         // Here you can add logic to submit the review, for example, sending it to a server
         console.log({ review:reviewText, rating });
         // Redirect the user after submitting the review
+        const success = await FirestoreDriver.writeReviewFromCourse(
+            courseName,
+            {review: reviewText, rating}
+        )
+        if (success) {
+            console.log("WRITE SUCCESS")
+            coursePageRef.current.click()
+        } else {
+            console.log("WRITE FAILED")
+        }
     };
 
     return (
@@ -74,6 +86,7 @@ const AddReview = () => {
             </div>
             <Footer/>
             <Link href={"/"} ref={homeRef}/>
+            <Link href={{pathname: '/course', query: {q: courseName}}} ref={coursePageRef}/>
         </div>
     );
 };
