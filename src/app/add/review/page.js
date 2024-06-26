@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import {getAuth} from "firebase/auth";
-import {app} from "/firebaseConfig"
+import app from "@/firebaseConfig"
 import {useSearchParams} from "next/navigation";
 import FirestoreDriver from "@/DatabaseDriver";
 
