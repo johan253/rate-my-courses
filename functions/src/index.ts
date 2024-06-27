@@ -141,7 +141,7 @@ export const getCourse = functions.https.onRequest(
 export const searchCourses = functions.https.onRequest(
   async (request: Request, response: Response) => {
     // Only allow GET requests
-    if (request.method !== "GET") {
+    if (request.method !== "POST") {
       response.status(405).send("Method Not Allowed");
       return;
     }
