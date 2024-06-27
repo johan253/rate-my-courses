@@ -10,12 +10,14 @@
 import {Request, Response} from "express";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as corsModule from "cors";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
 const logger = functions.logger;
 admin.initializeApp();
+const cors = corsModule({origin: true});
 
 /**
  * Hello World function
@@ -140,40 +142,49 @@ export const getCourse = functions.https.onRequest(
  */
 export const searchCourses = functions.https.onRequest(
   async (request: Request, response: Response) => {
-    // Only allow GET requests
-    if (request.method !== "POST") {
-      response.status(405).send("Method Not Allowed");
-      return;
-    }
-    // Prevent empty query
-    const query: string = request.body.query;
-    if (!query || query.trim() === "") {
-      response.status(400).send({error: "query not provided | empty",
-        request: request.body});
-      return;
-    }
-    try {
-      // Query Firestore for courses
-      const snapshot = await admin.firestore()
-        .collection("courses")
-        .where("name", ">=", query.toUpperCase())
-        .where("name", "<=", query.toUpperCase() + "\uf8ff")
-        .get();
-
-      if (snapshot.empty) {
-        response.status(404).send({error: "No courses found",
+    cors(request, response, async () => {
+      if (request.method == "OPTIONS") {
+        response.set("Access-Control-Allow-Origin", "*");
+        response.set("Access-Control-Allow-Methods", "POST");
+        response.set("Access-Control-Allow-Headers", "Content-Type");
+        return response.status(204).send();
+      }
+      // Only allow POST requests
+      if (request.method !== "POST") {
+        response.status(405).send("Method Not Allowed");
+        return;
+      }
+      // Prevent empty query
+      const query: string = request.body.query;
+      if (!query || query.trim() === "") {
+        response.status(400).send({error: "query not provided | empty",
           request: request.body});
         return;
       }
-      // Return courses
-      const courses: admin.firestore.DocumentData = [];
-      snapshot.forEach((doc) => {
-        courses.push({id: doc.id, ...doc.data()});
-      });
+      try {
+        // Query Firestore for courses
+        const snapshot = await admin.firestore()
+          .collection("courses")
+          .where("name", ">=", query.toUpperCase())
+          .where("name", "<=", query.toUpperCase() + "\uf8ff")
+          .get();
 
-      response.status(200).send(courses);
-    } catch (error) {
-      logger.error("Error getting documents", error);
-      response.status(500).send({error: "Error getting documents"});
-    }
+        if (snapshot.empty) {
+          response.status(404).send({error: "No courses found",
+            request: request.body});
+          return;
+        }
+        // Return courses
+        const courses: admin.firestore.DocumentData = [];
+        snapshot.forEach((doc) => {
+          courses.push({id: doc.id, ...doc.data()});
+        });
+
+        response.status(200).send(courses);
+      } catch (error) {
+        logger.error("Error getting documents", error);
+        response.status(500).send({error: "Error getting documents"});
+      }
+      return;
+    });
   });
