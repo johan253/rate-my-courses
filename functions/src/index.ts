@@ -57,36 +57,51 @@ export const echo = functions.https.onRequest(
  */
 export const getSchool = functions.https.onRequest(
   async (request: Request, response: Response) => {
-    if (request.method === "GET") {
-      const schoolId = request.body.schoolId;
-      if (schoolId) {
+    cors(request, response, async () => {
+      if (request.method == "OPTIONS") {
+        response.set("Access-Control-Allow-Origin", "*");
+        response.set("Access-Control-Allow-Methods", "GET");
+        response.set("Access-Control-Allow-Headers", "Content-Type");
+        response.status(204).send();
+      }
+      // Only allow GET requests
+      if (request.method !== "GET") {
+        response.status(405).send("Method Not Allowed");
+        return;
+      }
+      // Use parameters to get school ID
+      const schoolId = request.query.id;
+      if (!schoolId) {
+        response.status(400).send({error: "school id ('id' param) not provided",
+          request: request.query});
+        return;
+      }
+      try {
         const school = await admin
           .firestore()
           .collection("schools")
           .doc(schoolId.toString())
           .get();
-        if (school.exists) {
-          const data = school.data();
-          if (data) {
-            response.send({
-              id: school.id,
-              name: data.name,
-              location: data.location,
-            });
-          } else {
-            response.status(500).send({error: "Data not available"});
-          }
-        } else {
+        if (!school.exists) {
           response.status(404).send({error: "School not found",
-            request: request.body});
+            request: request.query});
+          return;
         }
-      } else {
-        response.status(400).send({error: "schoolId not provided",
-          request: request.body});
+        const data = school.data();
+        if (!data) {
+          response.status(500).send({error: "Data not available"});
+          return;
+        }
+        response.send({
+          id: school.id,
+          name: data.name,
+          location: data.location,
+        });
+      } catch (err) {
+        logger.error("Error getting school", err);
+        response.status(500).send({error: "Error getting school"});
       }
-    } else {
-      response.status(405).send("Method Not Allowed");
-    }
+    });
   });
 /**
  * Get a course by its ID
@@ -96,43 +111,49 @@ export const getSchool = functions.https.onRequest(
  */
 export const getCourse = functions.https.onRequest(
   async (request: Request, response: Response) => {
-    if (request.method === "GET") {
-      const courseId = request.body.courseId;
-      if (courseId) {
-        const course = await admin.firestore().collection("courses")
-          .doc(courseId.toString()).get();
-        if (course.exists) {
-          const data = course.data();
-          if (data) {
-            const school = await admin
-              .firestore()
-              .collection("schools")
-              .doc(data.school.split("/").pop())
-              .get();
-            response.send({
-              id: course.id,
-              name: data.name,
-              ratings: data.ratings,
-              school: school.data(),
-            });
-          } else {
-            logger.error(`Data not available for course: ${courseId}`);
-            response.status(500).send({error: "Data not available"});
-          }
-        } else {
-          logger.warn(`Course not found: ${courseId}`);
-          response.status(404).send({error: "Course not found",
-            request: request.query});
-        }
-      } else {
-        logger.error("courseId not provided");
-        response.status(400).send({error: "courseId not provided",
-          request: request.query});
+    cors(request, response, async () => {
+      if (request.method == "OPTIONS") {
+        response.set("Access-Control-Allow-Origin", "*");
+        response.set("Access-Control-Allow-Methods", "GET");
+        response.set("Access-Control-Allow-Headers", "Content-Type");
+        response.status(204).send();
       }
-    } else {
-      logger.error("Method Not Allowed, attempt to use ", request.method);
-      response.status(405).send("Method Not Allowed");
-    }
+      // Only allow GET requests
+      if (request.method !== "GET") {
+        response.status(405).send("Method Not Allowed");
+        return;
+      }
+      // Use parameters to get school ID
+      const courseId = request.query.id;
+      if (!courseId) {
+        response.status(400).send({error: "course id ('id' param) not provided",
+          request: request.query});
+        return;
+      }
+      try {
+        const course = await admin
+          .firestore()
+          .collection("courses")
+          .doc(courseId.toString())
+          .get();
+        if (!course.exists) {
+          response.status(404).send({error: "School not found",
+            request: request.query});
+          return;
+        }
+        const data = course.data();
+        if (!data) {
+          response.status(500).send({error: "Data not available"});
+          return;
+        }
+        response.send({
+          ...course.data(),
+        });
+      } catch (err) {
+        logger.error("Error getting course", err);
+        response.status(500).send({error: "Error getting course"});
+      }
+    });
   });
 /**
  * Search for courses by name
@@ -145,17 +166,18 @@ export const searchCourses = functions.https.onRequest(
     cors(request, response, async () => {
       if (request.method == "OPTIONS") {
         response.set("Access-Control-Allow-Origin", "*");
-        response.set("Access-Control-Allow-Methods", "POST");
+        response.set("Access-Control-Allow-Methods", "GET");
         response.set("Access-Control-Allow-Headers", "Content-Type");
         return response.status(204).send();
       }
       // Only allow POST requests
-      if (request.method !== "POST") {
+      if (request.method !== "GET") {
         response.status(405).send("Method Not Allowed");
         return;
       }
       // Prevent empty query
-      const query: string = request.body.query;
+      const query: string = request.query.q as string;
+      // Return code 400 if query is not provided or empty
       if (!query || query.trim() === "") {
         response.status(400).send({error: "query not provided | empty",
           request: request.body});
