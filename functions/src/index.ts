@@ -211,3 +211,128 @@ export const searchCourses = functions.https.onRequest(
       return;
     });
   });
+/**
+ * Search for schools by name, expensive query
+ *
+ * @param {Request} request - The request object.
+ * @param {Response} response - The response object.
+ */
+export const searchSchools = functions.https.onRequest(
+  async (req: Request, res: Response) => {
+    cors(req, res, async () => {
+      if (req.method == "OPTIONS") {
+        res.set("Access-Control-Allow-Origin", "*");
+        res.set("Access-Control-Allow-Methods", "GET");
+        res.set("Access-Control-Allow-Headers", "Content-Type");
+        return res.status(204).send();
+      }
+      // Only allow GET requests
+      if (req.method !== "GET") {
+        res.status(405).send("Method Not Allowed");
+        return;
+      }
+      // Prevent empty query
+      const query: string = req.query.q as string;
+      // Return code 400 if query is not provided or empty
+      if (!query || query.trim() === "" || query.trim().length < 5) {
+        res.status(400).send({error: "query not provided | empty | too short",
+          request: req.body});
+        return;
+      }
+      try {
+        // Query Firestore for schools
+        const snapshot = await admin.firestore()
+          .collection("schools")
+          .where("name", ">=", query)
+          .where("name", "<=", query + "\uf8ff")
+          .get();
+
+        if (snapshot.empty) {
+          res.status(404).send({error: "No schools found",
+            request: req.body});
+          return;
+        }
+        // Return schools
+        const schools: admin.firestore.DocumentData = [];
+        snapshot.forEach((doc) => {
+          schools.push({id: doc.id, ...doc.data()});
+        });
+
+        res.status(200).send(schools);
+      } catch (error) {
+        logger.error("Error getting documents", error);
+        res.status(500).send({error: "Error getting documents"});
+      }
+      return;
+    });
+  });
+
+/**
+ * Add a rating to a course
+ *
+ * @param {Request} request - The request object.
+ * @param {Response} response - The response object.
+ */
+export const addRating = functions.https.onRequest(
+  async (req: Request, res: Response) => {
+    cors(req, res, async () => {
+      if (req.method == "OPTIONS") {
+        res.set("Access-Control-Allow-Origin", "*");
+        res.set("Access-Control-Allow-Methods", "GET");
+        res.set("Access-Control-Allow-Headers", "Content-Type");
+        return res.status(204).send();
+      }
+      // Only allow POST requests
+      if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+      }
+      // Prevent empty query
+      const courseId: string = req.body.courseId;
+      const rating: number = req.body.rating;
+      const review: string = req.body.review;
+      // Return code 400 if query is not provided or empty
+      if (!courseId || courseId.trim() === "") {
+        res.status(400).send({error: "courseId not provided | empty",
+          request: req.body});
+        return;
+      }
+      if (!rating || rating < 0 || rating > 5) {
+        res.status(400).send({error: "rating not provided | invalid",
+          request: req.body});
+        return;
+      }
+      if (!review || review.trim() === "") {
+        res.status(400).send({error: "review not provided | empty",
+          request: req.body});
+        return;
+      }
+      try {
+        // Query Firestore for courses
+        const courseRef = admin
+          .firestore()
+          .collection("courses")
+          .doc(courseId);
+        // Check if course exists
+        const courseSnapshot = await courseRef.get();
+        if (!courseSnapshot.exists) {
+          res.status(404).send({ error: `Course (${courseId}) not found`, request: req.body });
+        }
+        // Add rating to course
+        const ratings = courseSnapshot.data()?.ratings || [];
+        // Get current date with format MM/DD/YYYY
+        const date: string = new Date().toLocaleString('en-US').split(',')[0];
+        
+        const newRating = { rating, review, date };
+        ratings.push(newRating);
+        // Update course with new rating
+        await courseRef.update({ ratings });
+        res.status(200).send({ message: "Rating added successfully", data: newRating });
+        logger.info("Rating added successfully: \n", JSON.stringify(newRating));
+      } catch (error) {
+        logger.error("Error adding rating", error);
+        res.status(500).send({ error: "Error adding rating" });
+      }
+      return;
+    });
+  });
