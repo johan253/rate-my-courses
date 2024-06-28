@@ -147,6 +147,7 @@ export const getCourse = functions.https.onRequest(
           return;
         }
         response.send({
+          id: course.id,
           ...course.data(),
         });
       } catch (err) {

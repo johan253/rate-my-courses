@@ -13,7 +13,7 @@ import FirestoreDriver  from "../../DatabaseDriver";
 function Search(props) {
     const [loading, setLoading] = useState(true)
     const createRef = useRef(null)
-    const search = useSearchParams().get('q').toLowerCase();
+    const search = useSearchParams().get('q');
     const [courses, setCourses] = useState([])
 
     const fetchData = async () => {

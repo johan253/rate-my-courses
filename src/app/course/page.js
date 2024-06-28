@@ -9,7 +9,7 @@ import StarRating from '@/components/StarRating';
 import Link from "next/link"; // Import the StarRating component
 
 const CoursePage = () => {
-    const queue = useSearchParams().get('q').toLowerCase();
+    const queue = useSearchParams().get('q');
     const [course, setCourse] = useState({});
     const [school, setSchool] = useState({});
     const [ratingCards, setRatingCards] = useState([]);
@@ -23,7 +23,8 @@ const CoursePage = () => {
         const fetchedCourse = await FirestoreDriver.getCourse(queue);
         setCourse(fetchedCourse);
         if (fetchedCourse.school) {
-            const fetchedSchool = await FirestoreDriver.getSchoolFromRef(fetchedCourse.school);
+            console.info(`getting school from ref: ${JSON.stringify(fetchedCourse)}`);
+            const fetchedSchool = await FirestoreDriver.getSchoolFromRef(fetchedCourse.school._path.segments[1]);
             setSchool(fetchedSchool);
         } else {
             console.error('No school for this course was found');

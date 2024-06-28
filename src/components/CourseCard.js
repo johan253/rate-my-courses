@@ -7,7 +7,7 @@ function CourseCard(props) {
     const course = props.course
     const [school, setSchool] = useState({});
     async function getSchool() {
-        setSchool(await FirestoreDriver.getSchoolFromRef(course.school))
+        setSchool(await FirestoreDriver.getSchoolFromRef(course.school._path.segments[1]))
     }
     const allRatings = course.ratings.map(r => r.rating);
     let average = allRatings.reduce((ps, c) => ps + c, 0)
@@ -17,7 +17,7 @@ function CourseCard(props) {
     }, [])
     return (
         <div className={"m-5 rounded-3xl shadow-xl max-w-screen-md border-2 border-black"}>
-            <Link href={{pathname: '/course', query: {q: course.name}}}>
+            <Link href={{pathname: '/course', query: {q: course.id}}}>
                 <h3 className={"p-4 bg-black rounded-t-2xl text-white"}>
                     {course.name}
                     <br/>

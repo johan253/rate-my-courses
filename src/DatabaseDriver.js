@@ -31,31 +31,49 @@ class Driver {
     // };
     searchCourse = async(search) => {
         const results = [];
+        const params = {q: search};
         try {
-            const response = await axios.post(__API_URL + "searchCourses", {
-                query: search
-            });
+            const response = await axios.get(__API_URL + "searchCourses", {params});
             response.data.forEach(cls => {
                 results.push(cls)
             });
         } catch (err) {
-            console.error(`Error searching course (${search}): `, err)
+            console.log(`Error searching course (${search}): `, "error: " , err.response.data)
         }
         return results;
     }
-    getCourse = async(crs) => {
-        console.log("GETTING course: ", crs)
-        return (await this.searchCourse(crs)).pop()
+    getCourse = async(courseId) => {
+        console.log("GETTING course id: ", courseId)
+        const params = {id: courseId};
+        try {
+            const response = await axios.get(__API_URL + "getCourse", {params});
+            return response.data;
+        } catch (err) {
+            console.error(`Error getting course (${courseId}): `, err)
+            return {};
+        };
     }
-    getSchoolFromRef = async(school) => {
-        let out = {}
-        console.log("inside driver, school ref is: \n", school)
-        await getDoc(school)
-            .then(ds => {
-                out = ds.data()
-            })
-        return out
+    // getSchoolFromRef = async(school) => {
+    //     let out = {}
+    //     console.log("inside driver, school ref is: \n", school)
+    //     await getDoc(school)
+    //         .then(ds => {
+    //             out = ds.data()
+    //         })
+    //     return out
+    // }
+    getSchoolFromRef = async(schoolId) => {
+        const result = {};
+        const params = {id: schoolId};
+        try {
+            const response = await axios.get(__API_URL + "getSchool", {params});
+            return response.data;
+        } catch (err) {
+            console.error(`Error getting school (${schoolId}): `, err)
+            return {};
+        }
     }
+    // TODO: Refactor to use API
     writeReviewFromCourse = async(course, data) => {
         if (!course || !data?.review || !data?.rating) {
             console.error("WRITE TO DB: failed, not valid course or data")
