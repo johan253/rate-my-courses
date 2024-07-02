@@ -137,7 +137,7 @@ export const getCourse = functions.https.onRequest(
           .doc(courseId.toString())
           .get();
         if (!course.exists) {
-          response.status(404).send({error: "School not found",
+          response.status(404).send({error: "Course not found",
             request: request.query});
           return;
         }
@@ -278,7 +278,7 @@ export const addRating = functions.https.onRequest(
     cors(req, res, async () => {
       if (req.method == "OPTIONS") {
         res.set("Access-Control-Allow-Origin", "*");
-        res.set("Access-Control-Allow-Methods", "GET");
+        res.set("Access-Control-Allow-Methods", "POST");
         res.set("Access-Control-Allow-Headers", "Content-Type");
         return res.status(204).send();
       }
@@ -316,22 +316,23 @@ export const addRating = functions.https.onRequest(
         // Check if course exists
         const courseSnapshot = await courseRef.get();
         if (!courseSnapshot.exists) {
-          res.status(404).send({ error: `Course (${courseId}) not found`, request: req.body });
+          res.status(404).send({error: `Course (${courseId}) not found`,
+            request: req.body});
         }
         // Add rating to course
         const ratings = courseSnapshot.data()?.ratings || [];
         // Get current date with format MM/DD/YYYY
-        const date: string = new Date().toLocaleString('en-US').split(',')[0];
-        
-        const newRating = { rating, review, date };
+        const date: string = new Date().toLocaleString("en-US").split(",")[0];
+        const newRating = {rating, review, date};
         ratings.push(newRating);
         // Update course with new rating
-        await courseRef.update({ ratings });
-        res.status(200).send({ message: "Rating added successfully", data: newRating });
+        await courseRef.update({ratings});
+        res.status(200).send({message: "Rating added successfully",
+          data: newRating});
         logger.info("Rating added successfully: \n", JSON.stringify(newRating));
       } catch (error) {
         logger.error("Error adding rating", error);
-        res.status(500).send({ error: "Error adding rating" });
+        res.status(500).send({error: "Error adding rating"});
       }
       return;
     });

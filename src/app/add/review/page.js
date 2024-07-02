@@ -5,39 +5,53 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import {getAuth} from "firebase/auth";
-import app from "@/firebaseConfig"
 import {useSearchParams} from "next/navigation";
 import FirestoreDriver from "@/DatabaseDriver";
 
 const AddReview = () => {
+    // State for review text, rating, and user name
     const [reviewText, setReviewText] = useState('');
     const [rating, setRating] = useState(1);
     const [userName, setUserName] = useState('')
+
+    // State for course object and course name
+    const [courseObj, setCourseObj] = useState({});
+    const [courseName, setCourseName] = useState('loading...')
+
+    // Reference to the course page and home page
     const coursePageRef = useRef(null);
     const homeRef = useRef(null)
-    const courseName = useSearchParams().get('q')
+
+    // Get the course ID from the URL
+    const courseId = useSearchParams().get('q');
+
+    // Get the current auth state
     const auth = getAuth();
+
     useEffect(() => {
+        // Redirect the user to the home page if they are not logged in
         if (!auth.currentUser) homeRef.current.click()
+        // Set the user name
         setUserName(auth.currentUser?.displayName)
-    }, [])
+        // Fetch the course object
+        const fetchData = async() => {
+            const course = await FirestoreDriver.getCourse(courseId)
+            setCourseObj(course)
+            setCourseName(course.name);
+        }
+        fetchData();
+    }, [courseId, auth.currentUser]) // auth.currentUser could cause bugs. So could courseId
     const handleSubmit = async(e) => {
         e.preventDefault();
-        // Here you can add logic to submit the review, for example, sending it to a server
-        console.log({ review:reviewText, rating });
         // Redirect the user after submitting the review
         const success = await FirestoreDriver.writeReviewFromCourse(
-            courseName,
+            courseId,
             {review: reviewText, rating}
         )
         if (success) {
-            console.log("WRITE SUCCESS")
             coursePageRef.current.click()
-        } else {
-            console.log("WRITE FAILED")
         }
     };
-
     return (
         <div className={"bg-white text-black"}>
             <Navbar/>
@@ -86,7 +100,7 @@ const AddReview = () => {
             </div>
             <Footer/>
             <Link href={"/"} ref={homeRef}/>
-            <Link href={{pathname: '/course', query: {q: courseName}}} ref={coursePageRef}/>
+            <Link href={{pathname: '/course', query: {q: courseId}}} ref={coursePageRef}/>
         </div>
     );
 };

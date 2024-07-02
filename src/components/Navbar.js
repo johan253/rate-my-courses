@@ -17,11 +17,10 @@ export default function Navbar() {
         linkRef.current.click()
     }
     const signOut = () => {
-        console.log("Signing out")
         getAuth(app).signOut().then(() => {
-            console.log("Signed out")
+            console.info("NAVBAR: Signed out")
         }).catch((error) => {
-            console.log(`An error occured while signing out: \n${error}`)
+            console.info(`NAVBAR: An error occured while signing out: \n${error}`)
         });
     }
     return(

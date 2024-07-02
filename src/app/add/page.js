@@ -9,21 +9,28 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 const Login = (props) => {
+    // Reference to the Link object that will redirect the user to write the review. Hidden by default
     const linkRef = useRef(null)
+    // State for loading
     const [loading, setLoading] = useState(Boolean)
+    // Get provider and auth object
     const provider = new GoogleAuthProvider();
     const auth = getAuth(app);
+    // State for logged in status
     const [loggedIn, setLoggedIn] = useState(getAuth(app).currentUser !== null);
+    // Get the target page query parameter
     const targetPage = useSearchParams().get('q')?.toLowerCase();
-    const targetCourse = useSearchParams().get('course')?.toLowerCase();
+    // Get the target course query parameter (may not exist if adding a course and not a review)
+    const targetCourse = useSearchParams().get('course');
 
     const handleLogin = async() => {
         const userCred = await signInWithPopup(auth, provider);
         setLoggedIn(userCred.user !== null)
     }
-
+    // TODO: Remove this function when finished testing
     const testlog = () => {
-        console.log({
+        console.info({
+            message: "LOGIN PAGE: Testing log out",
             targetPage,
             targetCourse,
             loggedIn,
@@ -32,7 +39,7 @@ const Login = (props) => {
     }
 
     useEffect(() => {
-        console.log("effect: ", loggedIn, auth.currentUser)
+        // If the user is logged in, redirect them to the target page
         if (loggedIn && linkRef.current) {
             linkRef.current.click()
         }
@@ -41,9 +48,11 @@ const Login = (props) => {
     return (
         <main className={"bg-white min-h-screen text-black"}>
             <Navbar/>
+            {/* Remove button when finished testing */}
             <button onClick={testlog}>
                 Test log & sign out
             </button>
+            {/* TODO: May need to edit this when adding a course? */}
             <Link href={
                     targetPage !== undefined ?
                     targetCourse !== undefined ? 
@@ -58,6 +67,7 @@ const Login = (props) => {
                     // Testing purposes, renavigate to create page?
                     null
                     :
+                    // Display login page
                     <div className={"bg-pink-200 p-8 text-center h-screen"}>
                         <p className={"my-20 text-4xl"}>
                             You need to be logged in to add classes or write reviews.

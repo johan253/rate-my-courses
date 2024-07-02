@@ -11,11 +11,15 @@ import FirestoreDriver  from "../../DatabaseDriver";
 
 
 function Search(props) {
+    // Loading state
     const [loading, setLoading] = useState(true)
+    // Reference to the "Add Course" button
     const createRef = useRef(null)
+    // Get the search query from the URL
     const search = useSearchParams().get('q');
+    // State for courses
     const [courses, setCourses] = useState([])
-
+    // Fetch courses from Firestore using the search query
     const fetchData = async () => {
         setLoading(true)
         setCourses(await FirestoreDriver.searchCourse(search));
@@ -24,6 +28,7 @@ function Search(props) {
     useEffect(() => {
         fetchData();
     }, [search]);
+    // Create CourseCard components for each course
     const cards = courses.map(c =>
         <CourseCard key={c.name} course={c}/>
     )
@@ -45,7 +50,7 @@ function Search(props) {
                 </p>
                 <div className={"my-6"}>
                     <Link href={{pathname:"../add", query: {q: "course"}}} className={"bg-black text-white rounded-3xl p-5"}
-                          ref={createRef}>
+                        ref={createRef}>
                         Add course
                     </Link>
                 </div>
