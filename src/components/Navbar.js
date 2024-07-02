@@ -6,7 +6,9 @@ import app from "@/firebaseConfig";
 import {getAuth} from "firebase/auth";
 
 export default function Navbar() {
-    const linkRef = useRef(null)
+    // Ref to Link component to go to home page
+    const homeLinkRef = useRef(null)
+    // State constant for value in search box
     const [search, setSearch] = useState("");
     function changeSearch(e) {
         setSearch(e.target.value);
@@ -14,8 +16,9 @@ export default function Navbar() {
     //TODO: implement autofill
     function handleSearch(e) {
         e.preventDefault()
-        linkRef.current.click()
+        homeLinkRef.current.click()
     }
+    //TODO: Remove when done testing
     const signOut = () => {
         getAuth(app).signOut().then(() => {
             console.info("NAVBAR: Signed out")
@@ -37,7 +40,7 @@ export default function Navbar() {
             <button onClick={signOut}>
                 Sign Out
             </button>
-            <Link href={{pathname: '/search', query: {q: search}}} ref={linkRef}
+            <Link href={{pathname: '/search', query: {q: search}}} ref={homeLinkRef}
             className={"hidden"}/>
         </header>
     )
