@@ -1,4 +1,5 @@
 import axios from "axios";
+import {getAuth} from "firebase/auth";
 
 let instance;
 const __API_URL = "https://us-central1-rate-my-course-0.cloudfunctions.net/"
@@ -71,13 +72,21 @@ class Driver {
             console.error("DRIVER: failed, not valid course or data")
             return false;
         }
+        const user = getAuth().currentUser;
+        const userIdToken = await user.getIdToken();
+        console.info("DRIVER: User ID Token: ", userIdToken)
         const body = {
             courseId: courseId,
             review: data.review,
             rating: data.rating,
         }
         try {
-            const response = await axios.post(__API_URL + "addRating", body);
+            const response = await axios.post(__API_URL + "addRating", body, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${userIdToken}`
+                },
+            });
             if (response.status === 200) {
                 return true;
             }

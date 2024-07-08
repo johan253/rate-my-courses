@@ -11,6 +11,7 @@ import {Request, Response} from "express";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as corsModule from "cors";
+import authenticate from "./middleware";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -282,58 +283,62 @@ export const addRating = functions.https.onRequest(
         res.set("Access-Control-Allow-Headers", "Content-Type");
         return res.status(204).send();
       }
-      // Only allow POST requests
-      if (req.method !== "POST") {
-        res.status(405).send("Method Not Allowed");
-        return;
-      }
-      // Prevent empty query
-      const courseId: string = req.body.courseId;
-      const rating: number = req.body.rating;
-      const review: string = req.body.review;
-      // Return code 400 if query is not provided or empty
-      if (!courseId || courseId.trim() === "") {
-        res.status(400).send({error: "courseId not provided | empty",
-          request: req.body});
-        return;
-      }
-      if (!rating || rating < 0 || rating > 5) {
-        res.status(400).send({error: "rating not provided | invalid",
-          request: req.body});
-        return;
-      }
-      if (!review || review.trim() === "") {
-        res.status(400).send({error: "review not provided | empty",
-          request: req.body});
-        return;
-      }
-      try {
-        // Query Firestore for courses
-        const courseRef = admin
-          .firestore()
-          .collection("courses")
-          .doc(courseId);
-        // Check if course exists
-        const courseSnapshot = await courseRef.get();
-        if (!courseSnapshot.exists) {
-          res.status(404).send({error: `Course (${courseId}) not found`,
-            request: req.body});
+      authenticate(req, res, async () => {
+        // Only allow POST requests
+        if (req.method !== "POST") {
+          res.status(405).send("Method Not Allowed");
+          return;
         }
-        // Add rating to course
-        const ratings = courseSnapshot.data()?.ratings || [];
-        // Get current date with format MM/DD/YYYY
-        const date: string = new Date().toLocaleString("en-US").split(",")[0];
-        const newRating = {rating, review, date};
-        ratings.push(newRating);
-        // Update course with new rating
-        await courseRef.update({ratings});
-        res.status(200).send({message: "Rating added successfully",
-          data: newRating});
-        logger.info("Rating added successfully: \n", JSON.stringify(newRating));
-      } catch (error) {
-        logger.error("Error adding rating", error);
-        res.status(500).send({error: "Error adding rating"});
-      }
+        // Prevent empty query
+        const courseId: string = req.body.courseId;
+        const rating: number = req.body.rating;
+        const review: string = req.body.review;
+        // Return code 400 if query is not provided or empty
+        if (!courseId || courseId.trim() === "") {
+          res.status(400).send({error: "courseId not provided | empty",
+            request: req.body});
+          return;
+        }
+        if (!rating || rating < 0 || rating > 5) {
+          res.status(400).send({error: "rating not provided | invalid",
+            request: req.body});
+          return;
+        }
+        if (!review || review.trim() === "") {
+          res.status(400).send({error: "review not provided | empty",
+            request: req.body});
+          return;
+        }
+        try {
+          // Query Firestore for courses
+          const courseRef = admin
+            .firestore()
+            .collection("courses")
+            .doc(courseId);
+          // Check if course exists
+          const courseSnapshot = await courseRef.get();
+          if (!courseSnapshot.exists) {
+            res.status(404).send({error: `Course (${courseId}) not found`,
+              request: req.body});
+          }
+          // Add rating to course
+          const ratings = courseSnapshot.data()?.ratings || [];
+          // Get current date with format MM/DD/YYYY
+          const date: string = new Date().toLocaleString("en-US").split(",")[0];
+          const newRating = {rating, review, date};
+          ratings.push(newRating);
+          // Update course with new rating
+          await courseRef.update({ratings});
+          res.status(200).send({message: "Rating added successfully",
+            data: newRating});
+          logger
+            .info("Rating added successfully: \n", JSON.stringify(newRating));
+        } catch (error) {
+          logger.error("Error adding rating", error);
+          res.status(500).send({error: "Error adding rating"});
+        }
+        return;
+      });
       return;
     });
   });
