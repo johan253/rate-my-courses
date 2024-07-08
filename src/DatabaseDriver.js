@@ -73,7 +73,7 @@ class Driver {
             return false;
         }
         const user = getAuth().currentUser;
-        const userIdToken = await user.getIdToken();
+        const userIdToken = await user?.getIdToken();
         console.info("DRIVER: User ID Token: ", userIdToken)
         const body = {
             courseId: courseId,

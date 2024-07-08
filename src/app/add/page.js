@@ -27,16 +27,6 @@ const Login = (props) => {
         const userCred = await signInWithPopup(auth, provider);
         setLoggedIn(userCred.user !== null)
     }
-    // TODO: Remove this function when finished testing
-    const testlog = () => {
-        console.info({
-            message: "LOGIN PAGE: Testing log out",
-            targetPage,
-            targetCourse,
-            loggedIn,
-            currentUser: auth.currentUser
-        });
-    }
 
     useEffect(() => {
         // If the user is logged in, redirect them to the target page
@@ -48,10 +38,6 @@ const Login = (props) => {
     return (
         <main className={"bg-white min-h-screen text-black"}>
             <Navbar/>
-            {/* Remove button when finished testing */}
-            <button onClick={testlog}>
-                Test log & sign out
-            </button>
             {/* TODO: May need to edit this when adding a course? */}
             <Link href={
                     targetPage !== undefined ?

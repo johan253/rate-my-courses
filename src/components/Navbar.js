@@ -37,6 +37,7 @@ export default function Navbar() {
                 <input className={"text-black px-2 py-1 rounded-3xl w-full"} placeholder={"Search for a course"}
                 value={search} onChange={changeSearch}/>
             </form>
+            {/* TODO: Remove */}
             <button onClick={signOut}>
                 Sign Out
             </button>
