@@ -1,5 +1,5 @@
 // StarRating.js
-import React from 'react';
+import React from "react";
 
 const StarRating = ({ rating }) => {
     const filledStars = Math.floor(rating) || 0;

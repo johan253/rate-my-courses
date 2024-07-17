@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -10,54 +10,54 @@ import FirestoreDriver from "@/DatabaseDriver";
 
 const AddReview = () => {
     // State for review text, rating, and user name
-    const [reviewText, setReviewText] = useState('');
+    const [reviewText, setReviewText] = useState("");
     const [rating, setRating] = useState(1);
-    const [userName, setUserName] = useState('')
-    const [loading, setLoading] = useState(true)
+    const [userName, setUserName] = useState("");
+    const [loading, setLoading] = useState(true);
 
     // State for course object and course name
-    const [courseObj, setCourseObj] = useState({});
-    const [courseName, setCourseName] = useState('loading...')
+    // const [courseObj, setCourseObj] = useState({});
+    const [courseName, setCourseName] = useState("loading...");
 
     // Reference to the course page and home page
     const coursePageRef = useRef(null);
-    const homeRef = useRef(null)
+    const homeRef = useRef(null);
 
     // Get the course ID from the URL
-    const courseId = useSearchParams().get('q');
+    const courseId = useSearchParams().get("q");
 
     // Get the current auth state
     const auth = getAuth();
 
     useEffect(() => {
         // Redirect the user to the home page if they are not logged in
-        if (!auth.currentUser) homeRef.current.click()
+        if (!auth.currentUser) homeRef.current.click();
         // Set the user name
-        setUserName(auth.currentUser?.displayName)
+        setUserName(auth.currentUser?.displayName);
         // Fetch the course object
         const fetchData = async() => {
-            const course = await FirestoreDriver.getCourse(courseId)
-            setCourseObj(course)
+            const course = await FirestoreDriver.getCourse(courseId);
+            setCourseObj(course);
             setCourseName(course.name);
-        }
+        };
         fetchData();
-        setLoading(false)
-    }, [courseId, auth.currentUser]) // auth.currentUser could cause bugs. So could courseId
+        setLoading(false);
+    }, [courseId, auth.currentUser]); // auth.currentUser could cause bugs. So could courseId
     const handleSubmit = async(e) => {
         e.preventDefault();
-        setLoading(true)
+        setLoading(true);
         // Redirect the user after submitting the review
         const success = await FirestoreDriver.writeReviewFromCourse(
             courseId,
             {review: reviewText, rating}
-        )
+        );
         if (success) {
-            alert("Review submitted successfully!")
-            coursePageRef.current.click()
+            alert("Review submitted successfully!");
+            coursePageRef.current.click();
         } else {
-            alert("Failed to submit review. Please try again.")
+            alert("Failed to submit review. Please try again.");
         }
-        setLoading(false)
+        setLoading(false);
     };
     return (
         <div className={"bg-white text-black"}>
@@ -113,7 +113,7 @@ const AddReview = () => {
                 </div>
                 <Footer/>
                 <Link href={"/"} ref={homeRef}/>
-                <Link href={{pathname: '/course', query: {q: courseId}}} ref={coursePageRef}/>
+                <Link href={{pathname: "/course", query: {q: courseId}}} ref={coursePageRef}/>
             </main>
             
         </div>

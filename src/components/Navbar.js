@@ -7,7 +7,7 @@ import {getAuth} from "firebase/auth";
 
 export default function Navbar() {
     // Ref to Link component to go to home page
-    const homeLinkRef = useRef(null)
+    const homeLinkRef = useRef(null);
     // State constant for value in search box
     const [search, setSearch] = useState("");
     function changeSearch(e) {
@@ -15,17 +15,17 @@ export default function Navbar() {
     }
     //TODO: implement autofill
     function handleSearch(e) {
-        e.preventDefault()
-        homeLinkRef.current.click()
+        e.preventDefault();
+        homeLinkRef.current.click();
     }
     //TODO: Remove when done testing
     const signOut = () => {
         getAuth(app).signOut().then(() => {
-            console.info("NAVBAR: Signed out")
+            console.info("NAVBAR: Signed out");
         }).catch((error) => {
-            console.info(`NAVBAR: An error occured while signing out: \n${error}`)
+            console.info(`NAVBAR: An error occured while signing out: \n${error}`);
         });
-    }
+    };
     return(
         <header className={"bg-black flex justify-between p-3 text-white"}>
             <Link href={"/"} className={"items-center justify-center font-extrabold text-xl"}>
@@ -35,14 +35,14 @@ export default function Navbar() {
             </Link>
             <form onSubmit={handleSearch} className={"justify-end w-1/2"}>
                 <input className={"text-black px-2 py-1 rounded-3xl w-full"} placeholder={"Search for a course"}
-                value={search} onChange={changeSearch}/>
+                    value={search} onChange={changeSearch}/>
             </form>
             {/* TODO: Remove */}
             <button onClick={signOut}>
                 Sign Out
             </button>
-            <Link href={{pathname: '/search', query: {q: search}}} ref={homeLinkRef}
-            className={"hidden"}/>
+            <Link href={{pathname: "/search", query: {q: search}}} ref={homeLinkRef}
+                className={"hidden"}/>
         </header>
-    )
+    );
 }

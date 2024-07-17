@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-function Rating(props) {
+function Rating() {
     return (
         <div>
             Rating

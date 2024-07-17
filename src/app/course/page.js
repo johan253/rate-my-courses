@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import FirestoreDriver from '../../DatabaseDriver';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import StarRating from '@/components/StarRating';
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import FirestoreDriver from "../../DatabaseDriver";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import StarRating from "@/components/StarRating";
 import Link from "next/link"; // Import the StarRating component
 
 const CoursePage = () => {
     // The query parameter 'q' is used to get the course ID
-    const queue = useSearchParams().get('q');
+    const queue = useSearchParams().get("q");
     // State for course and school objects
     const [course, setCourse] = useState({});
     const [school, setSchool] = useState({});
@@ -48,9 +48,9 @@ const CoursePage = () => {
         }
     }, [course]);
     // Destructure course and school objects
-    const courseName = course.name || '';
-    const courseSchool = school.name || '';
-    const courseLocation = school.location || '';
+    const courseName = course.name || "";
+    const courseSchool = school.name || "";
+    const courseLocation = school.location || "";
     return (
         <div className="bg-white text-black min-h-screen flex flex-col">
             <Navbar />

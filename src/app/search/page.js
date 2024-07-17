@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from "react";
 import Navbar from "@/components/Navbar";
 import {useSearchParams} from "next/navigation";
 import CourseCard from "@/components/CourseCard";
@@ -10,28 +10,28 @@ import Link from "next/link";
 import FirestoreDriver  from "../../DatabaseDriver";
 
 
-function Search(props) {
+function Search() {
     // Loading state
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
     // Reference to the "Add Course" button
-    const createRef = useRef(null)
+    const createRef = useRef(null);
     // Get the search query from the URL
-    const search = useSearchParams().get('q');
+    const search = useSearchParams().get("q");
     // State for courses
-    const [courses, setCourses] = useState([])
+    const [courses, setCourses] = useState([]);
     // Fetch courses from Firestore using the search query
     const fetchData = async () => {
-        setLoading(true)
+        setLoading(true);
         setCourses(await FirestoreDriver.searchCourse(search));
-        setLoading(false)
-    }
+        setLoading(false);
+    };
     useEffect(() => {
         fetchData();
     }, [search]);
     // Create CourseCard components for each course
     const cards = courses.map(c =>
         <CourseCard key={c.name} course={c}/>
-    )
+    );
     return (
         <main className={"bg-white"}>
             <Navbar/>

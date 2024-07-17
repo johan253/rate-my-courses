@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import {AiFillFacebook, AiFillGithub, AiFillTwitterCircle} from "react-icons/ai";
 
-function Footer(props) {
+function Footer() {
     return (
         <footer className={"bg-black p-10 text-white"}>
             <p className={"flex-auto"}>
