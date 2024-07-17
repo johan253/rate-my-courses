@@ -37,7 +37,7 @@ const AddReview = () => {
         // Fetch the course object
         const fetchData = async() => {
             const course = await FirestoreDriver.getCourse(courseId);
-            setCourseObj(course);
+            // setCourseObj(course);
             setCourseName(course.name);
         };
         fetchData();
