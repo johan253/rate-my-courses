@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import FirestoreDriver from "../../DatabaseDriver";
+import FirestoreDriver from "../../../DatabaseDriver";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StarRating from "@/components/StarRating";
 import Link from "next/link"; // Import the StarRating component
 
-const CoursePage = () => {
+const CoursePage = ({ params }) => {
     // The query parameter 'q' is used to get the course ID
-    const queue = useSearchParams().get("q");
+    const id = params.id;
     // State for course and school objects
     const [course, setCourse] = useState({});
     const [school, setSchool] = useState({});
@@ -20,7 +19,7 @@ const CoursePage = () => {
     const [averageRating, setAverageRating] = useState(0); // State for average rating
 
     const getData = async () => {
-        const fetchedCourse = await FirestoreDriver.getCourse(queue);
+        const fetchedCourse = await FirestoreDriver.getCourse(id);
         setCourse(fetchedCourse);
         if (fetchedCourse.school) {
             const fetchedSchool = await FirestoreDriver.getSchoolFromRef(fetchedCourse.school._path.segments[1]);
@@ -29,7 +28,7 @@ const CoursePage = () => {
     };
     useEffect(() => {
         getData();
-    }, [queue]);
+    }, [id]);
     useEffect(() => {
         if (course && course.ratings) {
             const cards = course.ratings.map((review, index) => (

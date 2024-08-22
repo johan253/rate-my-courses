@@ -8,9 +8,6 @@ function CourseCard(props) {
     const course = props.course;
     const [school, setSchool] = useState({});
     const [loading, setLoading] = useState(true);
-    async function timeout(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
     async function getSchool() {
         setSchool(await FirestoreDriver.getSchoolFromRef(course.school._path.segments[1]));
     }
@@ -18,15 +15,16 @@ function CourseCard(props) {
     let average = allRatings.reduce((ps, c) => ps + c, 0);
     average /= allRatings.length;
     useEffect(() => {
-        setLoading(true);
-        getSchool();
-        timeout(1000).then(() =>
-            setLoading(false)
-        );
+        async function fetchData() {
+            setLoading(true);
+            await getSchool();
+            setLoading(false);
+        }
+        fetchData();
     }, []);
     return (
         <div className={"m-5 rounded-3xl shadow-xl max-w-screen-md border-2 border-black"}>
-            <Link href={{pathname: "/course", query: {q: course.id}}}>
+            <Link href={`/course/${course.id}`}>
                 <h3 className={"p-4 bg-black rounded-t-2xl text-white"}>
                     {course.name}
                     <br/>

@@ -1,13 +1,14 @@
 "use client";
 
-import {useRef, useState} from "react";
+import {useState} from "react";
 import Link from "next/link";
 import app from "@/firebaseConfig";
 import {getAuth} from "firebase/auth";
+import {useRouter} from "next/navigation";
 
 export default function Navbar() {
-    // Ref to Link component to go to home page
-    const homeLinkRef = useRef(null);
+    // Get the router object
+    const router = useRouter();
     // State constant for value in search box
     const [search, setSearch] = useState("");
     function changeSearch(e) {
@@ -16,7 +17,7 @@ export default function Navbar() {
     //TODO: implement autofill
     function handleSearch(e) {
         e.preventDefault();
-        homeLinkRef.current.click();
+        router.push(`/search?q=${search}`);
     }
     //TODO: Remove when done testing
     const signOut = () => {
@@ -41,8 +42,6 @@ export default function Navbar() {
             <button onClick={signOut}>
                 Sign Out
             </button>
-            <Link href={{pathname: "/search", query: {q: search}}} ref={homeLinkRef}
-                className={"hidden"}/>
         </header>
     );
 }
