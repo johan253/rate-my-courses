@@ -80,11 +80,13 @@ class Driver {
             rating: data.rating,
         };
         try {
-            const response = await axios.post(__API_URL + "addRating", body, {
+            const response = await fetch("/api/course/addRating", {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${userIdToken}`
+                    "Authorization": "Bearer " + userIdToken
                 },
+                body
             });
             if (response.status === 200) {
                 return true;
