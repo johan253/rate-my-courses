@@ -9,11 +9,11 @@
     ],
     "quotes": [
       "error",
-      "single"
+      "double"
     ],
     "indent": [
       "error",
-      4
+      2
     ],
     "no-unused-vars": "error"
   }
