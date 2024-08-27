@@ -9,7 +9,7 @@
     ],
     "quotes": [
       "error",
-      "double"
+      "single"
     ],
     "indent": [
       "error",
