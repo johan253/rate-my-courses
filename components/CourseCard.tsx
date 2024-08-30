@@ -1,12 +1,35 @@
 "use server";
 import Link from "next/link";
+import type { Course } from "@prisma/client";
+import type { School } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
-export default async function CourseCard() {
+export default async function CourseCard({
+  course,
+  school,
+}: {
+  course: Course;
+  school: School;
+}) {
+  const ratings = await prisma.rating.findMany({
+    where: {
+      courseId: course.id,
+    },
+  });
+  const averageRating =
+    ratings.length > 0
+      ? (ratings.reduce((acc, rating) => acc + rating.rating, 0) /
+          ratings.length).toFixed(1)
+      : "No ratings yet";
+
   return (
-    <Link href="/course/1"
-      className={"bg-red-400 p-6 rounded-md border border-blue-300"}>
-      <h2>Course Title</h2>
-      <p>Course Description</p>
-    </Link>
+    <li className="bg-white shadow-lg w-full max-w-6xl rounded-lg p-6 transform transition-transform hover:scale-105 hover:shadow-xl">
+      <Link href={`/course/${course.id}`}>
+        <h2 className="text-xl font-semibold mb-2">{course.code}</h2>
+        <p className="text-lg mb-2">{averageRating}/5</p>
+        <p className="text-gray-700">{school.name}</p>
+        <p className="text-gray-500">{school.location}</p>
+      </Link>
+    </li>
   );
 }
