@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  nextjs:
+    image: node:18
+    container_name: nextjs_app
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app                      # Mount the current directory to /app inside the container
+      - /app/node_modules            # Ensure that node_modules inside the container is separate
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mydb
+      NEXT_PUBLIC_DATABASE_URL: postgres://postgres:postgres@db:5432/mydb
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
