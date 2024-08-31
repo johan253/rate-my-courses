@@ -4,7 +4,6 @@ services:
   nextjs:
     build:
       context: .
-    image: nextjs-dev
     ports:
       - "3000:3000"
     environment:
@@ -23,10 +22,16 @@ services:
           path: package.json
   
   postgres:
-    image: postgres:16
-    ports:
-      - "5432:5432"
+    image: postgres:latest
+    container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
