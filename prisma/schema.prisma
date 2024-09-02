@@ -7,43 +7,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String   @id @default(cuid())
-  email      String   @unique
-  passwordHash String?
-  createdAt   DateTime @default(now())
-  firstName   String
-  lastName    String?
-  school     School?   @relation(fields: [schoolId], references: [id])
-  schoolId   String?
-  ratings    Rating[]
-}
 model Course {
-  id          String   @id @default(cuid())
-  code        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  school     School   @relation(fields: [schoolId], references: [id])
-  schoolId   String
-  ratings    Rating[]
+  id        String   @id @default(cuid())
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  school    School   @relation(fields: [schoolId], references: [id])
+  schoolId  String
+  ratings   Rating[]
 }
 
 model Rating {
-  id          String   @id @default(cuid())
-  author     User    @relation(fields: [authorId], references: [id])
-  authorId   String
-  rating     Int 
-  review     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  course     Course  @relation(fields: [courseId], references: [id])
-  courseId   String
+  id        String   @id @default(cuid())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  rating    Int
+  review    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
 }
 
 model School {
-  id          String   @id @default(cuid())
-  name        String
-  location    String
-  users       User[]
-  courses     Course[]
+  id       String   @id @default(cuid())
+  name     String
+  location String
+  courses  Course[]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  ratings       Rating[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
 }
