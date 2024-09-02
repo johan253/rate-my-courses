@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-600 p-4">
+    <nav className={`${pathname !== "/" ? "bg-blue-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} p-4`}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="text-white text-2xl font-bold">
           <Link href="/">

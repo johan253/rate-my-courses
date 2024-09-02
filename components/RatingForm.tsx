@@ -50,6 +50,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
         {isPending ? "Submitting..." : "Submit Review"}
       </Button>
       {isPending && <p className="mt-2 text-red-500">Submitting...</p>}
+      {error ? <p className="mt-2 text-red-500">An error occurred. Please try again later.</p> : null}
     </form>
   );
 }

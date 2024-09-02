@@ -14,6 +14,7 @@
     "next": "canary",
     "react": "canary",
     "react-dom": "canary",
+    "react-icons": "^5.3.0",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {

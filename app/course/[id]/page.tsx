@@ -45,7 +45,7 @@ export default async function CoursePage({ params }: { params: { id: string } })
           }
         </ul>
       </div>
-      <div>
+      <div className="max-w-6xl mx-auto shadow-lg">
         <RatingForm courseId={course.id} authorId={"cm0hdhzzr0002ylfopjblzbdy"} />
       </div>
     </main>
