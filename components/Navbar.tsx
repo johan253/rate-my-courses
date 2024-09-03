@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
+import Image from "next/image";
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
@@ -51,7 +52,16 @@ export default function Navbar() {
         {
           session ? (
             <div className="flex items-center text-white">
-              <Link href="/me">
+              
+              <Link href="/me" className="flex items-center">
+                <Image
+                  className="w-8 h-8 rounded-full"
+                  src={session?.user?.image || "/avatar.png"}
+                  alt={session?.user?.name || "User avatar"}
+                  width={1}
+                  height={1}
+                  unoptimized
+                />
                 Profile
               </Link>
               <p>{" | "}</p>
