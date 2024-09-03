@@ -1,11 +1,18 @@
 "use client";
 import type { Rating } from "@prisma/client";
-import { useActionState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { deleteRating } from "@/lib/actions";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
+import { getSession } from "@/lib/actions";
+import { Session } from "next-auth";
 
-export default function RatingCard({ rating, children }: { rating: Rating, children: React.ReactNode }) {
+export default function RatingCard({ rating, children }: { rating: Rating; children?: React.ReactNode; }) {
   const [error, deleteAction, isPending] = useActionState(deleteRating, null);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    getSession().then((res) => setSession(res));
+  }, []);
 
   const handleDelete = () => {
     deleteAction(rating);
@@ -17,11 +24,14 @@ export default function RatingCard({ rating, children }: { rating: Rating, child
       }
       <div className="flex justify-between">
         <p className="text-yellow-500 font-semibold">{rating.rating}/5</p>
-        <form action={handleDelete}>
-          <button type="submit" disabled={isPending} className="flex">
-            <FaTrashCan/> {isPending && <FaCircleNotch className="animate-spin" />}
-          </button>
-        </form>
+        {session?.user && rating.authorId === session.user.id && (
+          <form action={handleDelete} className="flex">
+            <p className="text-xs italic text-gray-500 mx-5">You wrote this review</p>
+            <button type="submit" disabled={isPending} className="flex">
+              <FaTrashCan/> {isPending && <FaCircleNotch className="animate-spin" />}
+            </button>
+          </form>
+        )}
       </div>
       <p>{rating.review}</p>
       <p className="text-gray-500 text-sm mt-2">
