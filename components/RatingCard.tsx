@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { deleteRating } from "@/lib/actions";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
 
-export default function RatingCard({ rating }: { rating: Rating }) {
+export default function RatingCard({ rating, children }: { rating: Rating, children: React.ReactNode }) {
   const [error, deleteAction, isPending] = useActionState(deleteRating, null);
 
   const handleDelete = () => {
@@ -12,6 +12,9 @@ export default function RatingCard({ rating }: { rating: Rating }) {
   };
   return (
     <li className="bg-gray-50 p-4 rounded-lg shadow-sm w-full transform transition-transform hover:shadow-md">
+      {
+        children
+      }
       <div className="flex justify-between">
         <p className="text-yellow-500 font-semibold">{rating.rating}/5</p>
         <form action={handleDelete}>

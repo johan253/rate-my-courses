@@ -20,13 +20,13 @@ export default async function CourseCard({
     ratings.length > 0
       ? (ratings.reduce((acc, rating) => acc + rating.rating, 0) /
           ratings.length).toFixed(1)
-      : "No ratings yet";
+      : null;
 
   return (
     <li className="bg-white shadow-lg w-full max-w-6xl rounded-lg p-6 transform transition-transform hover:scale-105 hover:shadow-xl">
       <Link href={`/course/${course.id}`}>
         <h2 className="text-xl font-semibold mb-2">{course.code}</h2>
-        <p className="text-lg mb-2">{averageRating}/5</p>
+        <p className="text-lg mb-2">{averageRating ? `${averageRating}/5` : "No ratings yet"}</p>
         <p className="text-gray-700">{school.name}</p>
         <p className="text-gray-500">{school.location}</p>
       </Link>

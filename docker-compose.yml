@@ -6,9 +6,9 @@ services:
       context: .
     ports:
       - "3000:3000"
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+      - "5555:5555"
+    env_file:
+      - .env
     develop:
       watch:
         - action: sync
