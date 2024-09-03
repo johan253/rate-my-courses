@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import RatingCard from "@/components/RatingCard";
 import RatingForm from "@/components/RatingForm";
+import { auth } from "@/auth";
 
 export default async function CoursePage({ params }: { params: { id: string } }) {
   const course = await prisma.course.findUnique({
@@ -16,6 +17,8 @@ export default async function CoursePage({ params }: { params: { id: string } })
   if (!course) {
     return notFound();
   }
+
+  const userId = (await auth())?.user?.id || null;
 
   const averageRating =
     course.ratings.length > 0
@@ -46,7 +49,7 @@ export default async function CoursePage({ params }: { params: { id: string } })
         </ul>
       </div>
       <div className="max-w-6xl mx-auto shadow-lg">
-        <RatingForm courseId={course.id} authorId={"cm0hdhzzr0002ylfopjblzbdy"} />
+        <RatingForm courseId={course.id} authorId={userId} />
       </div>
     </main>
   );
