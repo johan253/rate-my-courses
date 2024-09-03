@@ -4,6 +4,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache"; // Optionally, for ISR
 import type { Rating } from "@prisma/client";
+import { auth } from "@/auth";
 
 export async function createRating(previousState: any, formData: FormData) {
   await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
@@ -41,4 +42,9 @@ export async function deleteRating(previousState: any, rating: Rating) {
     return error;
   }
   revalidatePath(`/course/${rating.courseId}`);
+}
+
+export async function getSession() {
+  const session = await auth();
+  return session;
 }

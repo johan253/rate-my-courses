@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { getSession } from "@/lib/actions";
+import { Session } from "next-auth";
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
+  const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -16,9 +19,12 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    getSession().then((res) => setSession(res));
+  }, []);
   return (
     <nav className={`${pathname !== "/" ? "bg-blue-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} p-4`}>
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className=" mx-auto flex justify-between items-center">
         <div className="text-white text-2xl font-bold">
           <Link href="/">
             Rate My Courses
@@ -42,6 +48,23 @@ export default function Navbar() {
             </button>
           </form>
         )}
+        {
+          session ? (
+            <div className="flex items-center text-white">
+              <Link href="/me">
+                Profile
+              </Link>
+              <p>{" | "}</p>
+              <Link href={`/api/auth/signout?callbackUrl=${pathname}`}>
+                Sign out
+              </Link>
+            </div>
+          ) : (
+            <Link href={`/api/auth/signin?callbackUrl=${pathname}`}>
+              Sign in
+            </Link>
+          )
+        }
       </div>
     </nav>
   );
