@@ -28,7 +28,7 @@ export default function RatingCard({ rating, children }: { rating: Rating; child
           <form action={handleDelete} className="flex">
             <p className="text-xs italic text-gray-500 mx-5">You wrote this review</p>
             <button type="submit" disabled={isPending} className="flex">
-              <FaTrashCan/> {isPending && <FaCircleNotch className="animate-spin" />}
+              <FaTrashCan className="hover:fill-red-600"/> {isPending && <FaCircleNotch className="animate-spin" />}
             </button>
           </form>
         )}
