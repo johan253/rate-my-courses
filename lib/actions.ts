@@ -48,3 +48,23 @@ export async function getSession() {
   const session = await auth();
   return session;
 }
+
+export async function addCourse(previousState: any, formData: FormData) {
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+  const code = formData.get("code") as string;
+  const schoolId = formData.get("school") as string;
+  if (!code || !schoolId) {
+    return "Missing required fields";
+  }
+  try {
+    await prisma.course.create({
+      data: {
+        code,
+        schoolId,
+      },
+    });
+  } catch (error) {
+    return error;
+  }
+  revalidatePath("/addCourse");
+}
