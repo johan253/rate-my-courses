@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
 import Image from "next/image";
+import { FaUser } from "react-icons/fa6";
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
@@ -27,7 +28,8 @@ export default function Navbar() {
     <nav className={`${pathname !== "/" ? "bg-blue-500" : "bg-gradient-to-r from-blue-500 to-purple-600"} p-4`}>
       <div className=" mx-auto flex justify-between items-center">
         <div className="text-white text-2xl font-bold">
-          <Link href="/">
+          <Link href="/"
+            className="hover:text-gray-200">
             Rate My Courses
           </Link>
         </div>
@@ -53,9 +55,9 @@ export default function Navbar() {
           session ? (
             <div className="flex items-center text-white">
               
-              <Link href="/me" className="flex items-center">
+              <Link href="/me" className="flex items-center hover:text-gray-200">
                 <Image
-                  className="w-8 h-8 rounded-full"
+                  className="w-8 h-8 rounded-full mx-2"
                   src={session?.user?.image || "/avatar.png"}
                   alt={session?.user?.name || "User avatar"}
                   width={1}
@@ -64,13 +66,16 @@ export default function Navbar() {
                 />
                 Profile
               </Link>
-              <p>{" | "}</p>
-              <Link href={`/api/auth/signout?callbackUrl=${pathname}`}>
+              <p className="mx-2">|</p>
+              <Link href={`/api/auth/signout?callbackUrl=${pathname}`}
+                className="hover:text-gray-200">
                 Sign out
               </Link>
             </div>
           ) : (
-            <Link href={`/api/auth/signin?callbackUrl=${pathname}`}>
+            <Link href={`/api/auth/signin?callbackUrl=${pathname}`}
+              className="flex items-center hover:text-gray-200">
+              <FaUser className="mx-2" />
               Sign in
             </Link>
           )

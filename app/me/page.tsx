@@ -37,7 +37,7 @@ export default async function MePage() {
   return (
     <main className="bg-gray-100 text-gray-900 min-h-screen p-8">
       <Profile user={session.user} />
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-8">
         <h1 className="text-2xl font-bold mb-4">My Ratings</h1>
         {userRatings.length === 0 ? (
           <p className="text-md">You haven&apos;t written any ratings yet.</p>
@@ -46,7 +46,10 @@ export default async function MePage() {
             {
               userRatings.map((rating) => (
                 <RatingCard key={rating.id} rating={rating} >
-                  <p>{rating.course.code}</p>
+                  <a href={`/course/${rating.courseId}`}
+                    className="hover:font-bold">
+                    {rating.course.code}
+                  </a>
                 </RatingCard>
               ))
             }
