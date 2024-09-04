@@ -34,7 +34,7 @@ export default async function SearchPage({
   });
 
   return (
-    <main className="bg-gray-100 text-gray-900 w-screen min-h-screen p-12">
+    <main className="w-screen min-h-screen p-12">
       <h1 className="text-3xl font-bold mb-6 text-center">
         Search Results for &quot;{query}&quot;
       </h1>
