@@ -62,6 +62,8 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
           Review
           </label>
           <textarea
+            rows={4}
+            maxLength={250}
             disabled={isPending || !authorId}
             id="review"
             name="review"
