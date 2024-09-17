@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getSchools } from "@/lib/actions";
 
+// eslint-disable-next-line no-unused-vars
 export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: string) => void }) {
   const [query, setQuery] = useState("");
   const [schools, setSchools] = useState<any[]>([]);
