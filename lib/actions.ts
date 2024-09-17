@@ -68,3 +68,19 @@ export async function addCourse(previousState: any, formData: FormData) {
   }
   revalidatePath("/addCourse");
 }
+
+export async function getSchools(query: string) {
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+  const schools = await prisma.school.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    orderBy: {
+      name: "asc",
+    }
+  });
+  return schools;
+}

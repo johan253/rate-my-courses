@@ -1,35 +1,42 @@
 "use client";
-import { useActionState } from "react";
-import { addCourse } from "@/lib/actions";
 
-export default function AddCoursePage() {
-  const [error, submitForm, isPending] = useActionState(addCourse, null);
+import { useState } from "react";
+import SchoolSearchBar from "@/components/SchoolSearchBar";
+
+export default function AddCourseForm() {
+  const [selectedSchool, setSelectedSchool] = useState<any>(null);
+
+  const handleSchoolSelect = (school: string) => {
+    setSelectedSchool(school);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Submit the course data along with the selected school
+    // You can pass this to your API to save in the database using Prisma
+    if (!selectedSchool) {
+      alert("Please select a school.");
+      return;
+    }
+    console.log("Selected School:", selectedSchool);
+  };
   return (
-    <div className="p-8">
-      <h1>Add a Course</h1>
-      <form
-        className="flex flex-col gap-4"
-        action={submitForm}>
-        <input
-          id="code"
-          name="code"
-          placeholder="Course Code"
-        />
-        <input
-          id="school"
-          name="school"
-          placeholder="School"
-        />
-        <button type="submit">
-          Submit
-        </button>
-      </form>
-      {
-        isPending && <p>Submitting...</p>
-      }
-      {
-        error ? <p className="text-red-500">An error has occured</p> : null
-      }
-    </div>
+    <form onSubmit={handleSubmit} className="p-8">
+      <h1 className="text-2xl mb-4">Add a New Course</h1>
+
+      <label className="block mb-2">
+        School:
+        <SchoolSearchBar onSelectSchool={handleSchoolSelect} />
+      </label>
+
+      <label className="block mb-2">
+        Course Name:
+        <input type="text" className="w-full p-2 border border-gray-300 rounded" required />
+      </label>
+
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        Add Course
+      </button>
+    </form>
   );
 }
