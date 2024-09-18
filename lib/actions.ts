@@ -7,7 +7,6 @@ import type { Rating } from "@prisma/client";
 import { auth } from "@/auth";
 
 export async function createRating(previousState: any, formData: FormData) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
   const courseId = formData.get("courseId") as string;
   const authorId = formData.get("authorId") as string;
   const rating = Number(formData.get("rating"));
@@ -33,7 +32,6 @@ export async function createRating(previousState: any, formData: FormData) {
 }
 
 export async function deleteRating(previousState: any, rating: Rating) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
   try {
     await prisma.rating.delete({
       where: { id: rating.id },
@@ -50,7 +48,6 @@ export async function getSession() {
 }
 
 export async function addCourse(previousState: any, formData: FormData) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
   const code = formData.get("code") as string;
   const schoolId = formData.get("school") as string;
   if (!code || !schoolId) {
@@ -70,7 +67,6 @@ export async function addCourse(previousState: any, formData: FormData) {
 }
 
 export async function getSchools(query: string) {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
   const schools = await prisma.school.findMany({
     where: {
       name: {
