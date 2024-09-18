@@ -25,23 +25,32 @@ export default function Navbar() {
     getSession().then((res) => setSession(res));
   }, []);
   return (
-    <nav className="p-4 bg-white">
-      <div className=" mx-auto flex justify-between items-center">
+    <nav className="px-4 bg-white">
+      <div className="flex flex-col sm:flex-row mx-auto justify-between items-center text-nowrap">
         <div className="text-2xl font-bold">
           <Link href="/"
-            className="hover:text-gray-500">
-            Rate My Courses
+            className="flex hover:text-gray-500 m-2 gap-2 items-center">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={35}
+              height={35}
+              className=""
+              quality={100}
+            >
+            </Image>
+            <p>Rate My Courses</p>
           </Link>
         </div>
         {/* Conditionally render the search form */}
         {pathname !== "/" && (
-          <form onSubmit={handleSearch} className="flex items-center border rounded-lg">
+          <form onSubmit={handleSearch} className="flex items-center border rounded-lg w-max sm:w-1/3">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="MATH101..."
-              className="text-black p-2 rounded-l-lg border-none focus:ring-2"
+              className="text-black p-2 rounded-l-lg border-none focus:ring-2 flex-grow w-full"
             />
             <button
               type="submit"
@@ -53,8 +62,7 @@ export default function Navbar() {
         )}
         {
           session ? (
-            <div className="flex items-center">
-              
+            <div className="flex items-center my-2">
               <Link href="/me" className="flex items-center hover:text-gray-500">
                 <Image
                   className="w-8 h-8 rounded-full mx-2"
@@ -74,7 +82,7 @@ export default function Navbar() {
             </div>
           ) : (
             <Link href={`/api/auth/signin?callbackUrl=${pathname}`}
-              className="flex items-center hover:text-gray-500">
+              className="flex items-center hover:text-gray-500 my-2">
               <FaUser className="mx-2" />
               Sign in
             </Link>
