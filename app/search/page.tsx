@@ -13,8 +13,8 @@ export default async function SearchPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const query = (searchParams.q as string)?.toUpperCase();
-  let courseBuffer = (searchParams.page as string) ? Number(searchParams.page) : 1;
-  if (!query || !courseBuffer) redirect("/");
+  const courseBuffer = (searchParams.page as string) ? Number(searchParams.page) : 1;
+  if (!query || courseBuffer < 1) redirect("/");
 
   const totalCount = await prisma.course.count({
     where: {
