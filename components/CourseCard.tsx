@@ -23,7 +23,7 @@ export default async function CourseCard({
       : null;
 
   return (
-    <li className="bg-orange-50 shadow-lg w-full max-w-6xl rounded-lg p-6 transform transition-transform hover:scale-105 hover:shadow-xl">
+    <li className="bg-white shadow-lg w-full max-w-6xl rounded-lg p-6 transform transition-transform hover:scale-105 hover:shadow-xl">
       <Link href={`/course/${course.id}`}>
         <h2 className="text-xl font-semibold mb-2">{course.code}</h2>
         <p className="text-lg mb-2">{averageRating ? `${averageRating}/5` : "No ratings yet"}</p>

@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import CourseCard from "@/components/CourseCard";
+import Link from "next/link";
+
+const COURSE_LOAD_AMOUNT = 10;
 
 export default async function SearchPage({
   searchParams,
@@ -10,7 +13,18 @@ export default async function SearchPage({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const query = (searchParams.q as string)?.toUpperCase();
-  if (!query) redirect("/");
+  let courseBuffer = (searchParams.page as string) ? Number(searchParams.page) : 1;
+  if (!query || !courseBuffer) redirect("/");
+
+  const totalCount = await prisma.course.count({
+    where: {
+      code: {
+        contains: query,
+      },
+    },
+  });
+
+  const totalPages = Math.ceil(totalCount / COURSE_LOAD_AMOUNT);
 
   const results = await prisma.course.findMany({
     where: {
@@ -21,6 +35,8 @@ export default async function SearchPage({
     include: {
       school: true,
     },
+    take: COURSE_LOAD_AMOUNT,
+    skip: COURSE_LOAD_AMOUNT * (courseBuffer - 1),
   });
 
   const courseCards = results.map((course) => {
@@ -45,6 +61,31 @@ export default async function SearchPage({
           courseCards
         )}
       </ul>
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8">
+          <ul className="flex space-x-2">
+            {Array.from({ length: totalPages }).map((_, index) => {
+              const page = index + 1;
+              return (
+                <li key={page}>
+                  <Link
+                    href={`?q=${encodeURIComponent(query)}&page=${page}`}
+                    className={
+                      `px-4 py-2 border border-blue-900 rounded-lg ${
+                        courseBuffer === page ? 
+                          "bg-blue-900 text-white hover:bg-blue-700" 
+                          :
+                          "bg-white text-blue-900 hover:bg-gray-100"}`
+                    }
+                  >
+                    {page}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </main>
   );
 }
