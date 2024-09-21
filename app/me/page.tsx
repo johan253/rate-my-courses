@@ -15,7 +15,7 @@ export default async function MePage() {
   if (!session?.user) {
     // If the user is not logged in, you can redirect them or show a message
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center gap-6">
+      <main className="flex flex-col items-center justify-center gap-6">
         <p className="text-xl">Please log in to view your Profile and Ratings.</p>
         <a href="/api/auth/signin?callbackUrl=/me">
           <Button variant="primary">Sign In</Button>
@@ -35,7 +35,7 @@ export default async function MePage() {
   });
 
   return (
-    <main className="min-h-screen p-8">
+    <main className="p-8">
       <Profile user={session.user} />
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-8">
         <h1 className="text-2xl font-bold mb-4">My Ratings</h1>

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { getSchools } from "@/lib/actions";
+import type { School } from "@prisma/client";
 
 // eslint-disable-next-line no-unused-vars
-export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: string) => void }) {
+export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: School) => void }) {
   const [query, setQuery] = useState("");
   const [schools, setSchools] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);

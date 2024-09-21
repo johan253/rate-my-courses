@@ -30,7 +30,7 @@ export default async function CoursePage({ params }: { params: { id: string } })
     <RatingCard key={rating.id} rating={rating} />
   ));
   return (
-    <main className="min-h-screen p-8">
+    <main className="p-8">
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-4xl font-bold mb-4">{course.code}</h1>
         <p className="text-xl mb-4">School: {course.school.name}</p>

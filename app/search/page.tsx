@@ -26,6 +26,8 @@ export default async function SearchPage({
 
   const totalPages = Math.ceil(totalCount / COURSE_LOAD_AMOUNT);
 
+  if (totalPages > 0 && courseBuffer > totalPages) redirect("/");
+
   const results = await prisma.course.findMany({
     where: {
       code: {
@@ -50,7 +52,7 @@ export default async function SearchPage({
   });
 
   return (
-    <main className="w-screen min-h-screen p-12">
+    <main className="p-12">
       <h1 className="text-3xl font-bold mb-6 text-center">
         Search Results for &quot;{query}&quot;
       </h1>
@@ -86,6 +88,17 @@ export default async function SearchPage({
           </ul>
         </div>
       )}
+      <div className="flex flex-col items-center mt-8 gap-6">
+        <h2 className="text-xl">
+          Cant find what you&apos;re looking for?
+        </h2>
+        <Link
+          href="/addCourse"
+          className="bg-blue-900 p-2 rounded-lg text-white hover:bg-blue-700"
+        >
+          Add a course
+        </Link>
+      </div>
     </main>
   );
 }
