@@ -47,23 +47,44 @@ export async function getSession() {
   return session;
 }
 
-export async function addCourse(previousState: any, formData: FormData) {
-  const code = formData.get("code") as string;
-  const schoolId = formData.get("school") as string;
-  if (!code || !schoolId) {
-    return "Missing required fields";
+export async function addCourse(schoolId: string, code: string) {
+  if (code.trim() === "" || schoolId.trim() === "") {
+    return JSON.stringify({
+      error: "Missing required fileds",
+      courseId: null,
+    });
   }
+  const duplicates = await prisma.course.findFirst({
+    where: {
+      code,
+      schoolId,
+    },
+  });
+  if (duplicates) {
+    return JSON.stringify({
+      error: "Course already exists",
+      courseId: null,
+    });
+  }
+  let result;
   try {
-    await prisma.course.create({
+    result = await prisma.course.create({
       data: {
         code,
         schoolId,
       },
     });
   } catch (error) {
-    return error;
+    return JSON.stringify({
+      error: "Failed to create course",
+      courseId: null,
+    });
   }
   revalidatePath("/addCourse");
+  return JSON.stringify({
+    error: null,
+    courseId: result.id,
+  });
 }
 
 export async function getSchools(query: string) {

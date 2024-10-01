@@ -1,25 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
-import type { School } from "@prisma/client";
+import type { School, Course } from "@prisma/client";
+import { addCourse } from "@/lib/actions";
 
 export default function AddCourseForm() {
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleSchoolSelect = (school: School) => {
+  const handleSchoolSelect = (school: School | null) => {
     setSelectedSchool(school);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Submit the course data along with the selected school
-    // You can pass this to your API to save in the database using Prisma
     if (!selectedSchool) {
-      alert("Please select a school.");
+      alert("Please select a school");
+      return;
+    }
+    const result = JSON.parse(await addCourse(selectedSchool.id, code));
+    if (result.error) {
+      setError(result.error);
       return;
     } else {
-      alert(`This feature is not implemented yet. Please check back later.\n\nSelected School: ${selectedSchool.name}\nCourse Name: ${(e.target as any).elements[1].value}`);
+      setCode("");
+      setSelectedSchool(null);
+      setError(null);
+      router.push(`/course/${result.courseId}`);
     }
   };
   return (
@@ -36,7 +47,9 @@ export default function AddCourseForm() {
         <label className="block mb-2 w-3/4 max-w-xl">
         Course Name:
           <input
-            pattern="[A-Z]{2,5}[&]?[0-9]{3,4}"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            pattern="[A-Z]{2,5}[&]?[0-9]{2,4}"
             title="First 2-10 characters must be uppercase letters or '&', followed by 3 digits"
             placeholder="MATH101"
             type="text" 
@@ -46,8 +59,9 @@ export default function AddCourseForm() {
         </label>
 
         <button type="submit" className="bg-blue-500 text-white p-2 rounded w-max">
-        Add Course
+          Add Course
         </button>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
       </form>
       <div
         className="flex flex-col items-center mt-8 gap-6"

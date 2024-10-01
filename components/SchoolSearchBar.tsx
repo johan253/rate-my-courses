@@ -5,7 +5,7 @@ import { getSchools } from "@/lib/actions";
 import type { School } from "@prisma/client";
 
 // eslint-disable-next-line no-unused-vars
-export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: School) => void }) {
+export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: School | null) => void }) {
   const [query, setQuery] = useState("");
   const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +46,10 @@ export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (s
       <input
         type="text"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          onSelectSchool(null); // Clear the selected school
+        }}
         placeholder="Search for a school..."
         className="w-full p-2 border border-gray-300 rounded"
       />
