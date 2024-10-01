@@ -7,19 +7,20 @@ import type { School } from "@prisma/client";
 // eslint-disable-next-line no-unused-vars
 export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: School) => void }) {
   const [query, setQuery] = useState("");
-  const [schools, setSchools] = useState<any[]>([]);
+  const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentSchool, setCurrentSchool] = useState<School | null>(null);
 
   // Debounce the search input (wait 500ms after user stops typing)
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (query.trim() && query.length > 4) {
+      if (query.trim() && query.length > 4 && query !== currentSchool?.name) {
         searchSchools(query);
       }
     }, 1000);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query]);
+  }, [query, currentSchool]);
 
   const searchSchools = async (query: string) => {
     setLoading(true);
@@ -27,7 +28,7 @@ export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (s
       const response = await getSchools(query);
       setSchools(response);
     } catch (error) {
-      console.error("Error searching schools:", error);
+      setSchools([]);
     } finally {
       setLoading(false);
     }
@@ -35,6 +36,7 @@ export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (s
 
   const handleSelectSchool = (school: any) => {
     setQuery(school.name);
+    setCurrentSchool(school);
     onSelectSchool(school); // Pass the selected school to the parent component
     setSchools([]); // Clear suggestions
   };
