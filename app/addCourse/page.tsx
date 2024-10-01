@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
-import type { School, Course } from "@prisma/client";
+import type { School } from "@prisma/client";
 import { addCourse } from "@/lib/actions";
 
 export default function AddCourseForm() {
