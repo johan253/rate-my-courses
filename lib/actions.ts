@@ -7,6 +7,8 @@ import type { Rating } from "@prisma/client";
 import { auth } from "@/auth";
 
 export async function createRating(previousState: any, formData: FormData) {
+  if (!isLoggedIn()) return "You must be logged in to create a rating";
+  
   const courseId = formData.get("courseId") as string;
   const authorId = formData.get("authorId") as string;
   const rating = Number(formData.get("rating"));
@@ -32,6 +34,8 @@ export async function createRating(previousState: any, formData: FormData) {
 }
 
 export async function deleteRating(previousState: any, rating: Rating) {
+  if (!isLoggedIn()) return "You must be logged in to delete a rating";
+
   try {
     await prisma.rating.delete({
       where: { id: rating.id },
@@ -48,6 +52,8 @@ export async function getSession() {
 }
 
 export async function addCourse(schoolId: string, code: string) {
+  if (!isLoggedIn()) return "You must be logged in to add a course";
+
   if (code.trim() === "" || schoolId.trim() === "") {
     return JSON.stringify({
       error: "Missing required fileds",
@@ -100,4 +106,9 @@ export async function getSchools(query: string) {
     }
   });
   return schools;
+}
+
+async function isLoggedIn() {
+  const session = await auth();
+  return session !== null;
 }

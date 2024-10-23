@@ -1,16 +1,15 @@
 "use client";
 
 import { useActionState, useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { createRating } from "@/lib/actions";
 import Button from "@/components/Button";
+import AuthModal from "@/components/AuthModal";
+import { revalidatePath } from "next/cache";
 
 export default function RatingForm({ courseId, authorId }: { courseId: string; authorId: string | null}) {
   // Using useActionState to manage the action and loading state
   const [error, submit, isPending] = useActionState(createRating, null);
   const [isModalOpen, setIsModalOpen] = useState(!authorId);
-  const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (!authorId) {
@@ -18,24 +17,11 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
     }
   }, [authorId]);
 
-  const redirectToSignin = () => {
-    router.push(`/api/auth/signin?callbackUrl=${pathname}`);
-  };
-
   return (
     <div className="relative">
-      {isModalOpen && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 rounded-lg">
-          <div className="bg-white rounded-lg p-8 max-w-sm mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-            <p className="mb-6">You need to sign in to leave a review.</p>
-            <Button onClick={redirectToSignin} variant="primary">
-              Sign In
-            </Button>
-          </div>
-        </div>
-      )}
+      <AuthModal isOpen={isModalOpen} message="You need to sign in to leave a review."/>
       <form action={(data) => {
+        if (!authorId) return;
         data.append("courseId", courseId);
         data.append("authorId", authorId as string);
         submit(data);

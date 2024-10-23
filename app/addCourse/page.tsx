@@ -1,16 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/Button";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
 import type { School } from "@prisma/client";
 import { addCourse } from "@/lib/actions";
+import { getSession } from "@/lib/actions";
+import { log } from "console";
+import { Session } from "next-auth";
 
 export default function AddCourseForm() {
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    console.log("useEffect");
+    
+    getSession().then((session) => setSession(session));
+  }, []);
+
+  if (!session?.user) {
+    return (
+      <main className="flex flex-col items-center justify-center gap-6">
+        <p className="text-xl">Please log in to add a course.</p>
+        <a href="/api/auth/signin?callbackUrl=/addCourse">
+          <Button variant="primary">Sign In</Button>
+        </a>
+      </main>
+    );
+  }
 
   const handleSchoolSelect = (school: School | null) => {
     setSelectedSchool(school);
