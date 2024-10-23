@@ -52,7 +52,7 @@ export async function getSession() {
 }
 
 export async function addCourse(schoolId: string, code: string) {
-  if (!isLoggedIn()) return "You must be logged in to add a course";
+  if (!isLoggedIn()) return JSON.stringify({ error: "You must be logged in to add a course", courseId: null });
 
   if (code.trim() === "" || schoolId.trim() === "") {
     return JSON.stringify({
