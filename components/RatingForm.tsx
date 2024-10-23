@@ -4,7 +4,6 @@ import { useActionState, useState, useEffect } from "react";
 import { createRating } from "@/lib/actions";
 import Button from "@/components/Button";
 import AuthModal from "@/components/AuthModal";
-import { revalidatePath } from "next/cache";
 
 export default function RatingForm({ courseId, authorId }: { courseId: string; authorId: string | null}) {
   // Using useActionState to manage the action and loading state
