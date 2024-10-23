@@ -7,7 +7,6 @@ import SchoolSearchBar from "@/components/SchoolSearchBar";
 import type { School } from "@prisma/client";
 import { addCourse } from "@/lib/actions";
 import { getSession } from "@/lib/actions";
-import { log } from "console";
 import { Session } from "next-auth";
 
 export default function AddCourseForm() {
@@ -18,8 +17,6 @@ export default function AddCourseForm() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("useEffect");
-    
     getSession().then((session) => setSession(session));
   }, []);
 
