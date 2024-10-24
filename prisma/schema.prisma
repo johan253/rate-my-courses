@@ -15,6 +15,8 @@ model Course {
   school    School   @relation(fields: [schoolId], references: [id])
   schoolId  String
   ratings   Rating[]
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
 
   @@unique([code, schoolId])
 }
@@ -49,6 +51,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   ratings       Rating[]
+  courses       Course[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
