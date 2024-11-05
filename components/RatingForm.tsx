@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useEffect } from "react";
-import { createRating } from "@/lib/actions";
+import { createRating, getCourseRatings } from "@/lib/actions";
 import Button from "@/components/Button";
 import AuthModal from "@/components/AuthModal";
 
@@ -9,16 +9,34 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
   // Using useActionState to manage the action and loading state
   const [error, submit, isPending] = useActionState(createRating, null);
   const [isModalOpen, setIsModalOpen] = useState(!authorId);
+  const [alreadyRated, setAlreadyRated] = useState(false);
 
   useEffect(() => {
     if (!authorId) {
       setIsModalOpen(true);
     }
-  }, [authorId]);
-
+    else {
+      getCourseRatings(courseId).then((ratings) => {
+        if (
+          ratings.some((rating) => {
+            return rating.authorId === authorId;
+          })
+        ) {
+          setAlreadyRated(true);
+        }
+      });
+    }
+  }, [authorId, courseId]);
   return (
     <div className="relative">
       <AuthModal isOpen={isModalOpen} message="You need to sign in to leave a review."/>
+      {alreadyRated && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 rounded-lg">
+          <div className="bg-white rounded-lg p-8 max-w-sm mx-auto text-center">
+            <h2 className="text-2xl font-bold">You have already left a review for this course.</h2>
+          </div>
+        </div>
+      )}
       <form action={(data) => {
         if (!authorId) return;
         data.append("courseId", courseId);
@@ -32,7 +50,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
           Rating
           </label>
           <input
-            disabled={isPending || !authorId}
+            disabled={alreadyRated || isPending || !authorId}
             type="number"
             id="rating"
             name="rating"
@@ -49,7 +67,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
           <textarea
             rows={4}
             maxLength={250}
-            disabled={isPending || !authorId}
+            disabled={alreadyRated || isPending || !authorId}
             id="review"
             name="review"
             required
@@ -58,7 +76,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
         </div>
         <Button
           type="submit"
-          disabled={isPending || !authorId}
+          disabled={alreadyRated || isPending || !authorId}
           variant="primary"
         >
           {isPending ? "Submitting..." : "Submit Review"}

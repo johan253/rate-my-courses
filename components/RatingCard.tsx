@@ -5,6 +5,7 @@ import { deleteRating } from "@/lib/actions";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
 import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
+import StarRating from "@/components/StarRating";
 
 export default function RatingCard({ rating, children }: { rating: Rating; children?: React.ReactNode; }) {
   const [error, deleteAction, isPending] = useActionState(deleteRating, null);
@@ -23,7 +24,7 @@ export default function RatingCard({ rating, children }: { rating: Rating; child
         children
       }
       <div className="flex justify-between">
-        <p className="text-yellow-500 font-semibold">{rating.rating}/5</p>
+        <StarRating rating={rating.rating} />
         {session?.user && rating.authorId === session.user.id && (
           <form action={handleDelete} className="flex">
             <p className="text-xs italic text-gray-500 mx-5">You wrote this review</p>
