@@ -36,7 +36,7 @@ export default async function CoursePage({ params }: { params: { id: string } })
         <h1 className="text-4xl font-bold mb-4">{course.code}</h1>
         <p className="text-xl mb-4">School: {course.school.name}</p>
         <p className="text-gray-700 mb-4">{course.school.location}</p>
-        <p className="text-2xl font-semibold mb-4 flex items-center">Average Rating:&nbsp;{averageRating ? <StarRating rating={Number(averageRating)}/> : <StarRating rating={0}/>}</p>
+        <div className="text-2xl font-semibold mb-4 flex items-center">Average Rating:&nbsp;{averageRating ? <StarRating rating={Number(averageRating)}/> : <StarRating rating={0}/>}</div>
         <h2 className="text-2xl font-bold mb-2">Student Reviews</h2>
         <ul className="flex flex-col items-center gap-6">
           { ratingCards.length === 0 ? 
