@@ -12,7 +12,7 @@ export default async function ExplorePage() {
       <h1 className="text-3xl font-bold mb-6 text-center">
         Top 5 trending courses in the last 24 hours
       </h1>
-      <ul>
+      <ul className="flex flex-col gap-6">
         {courseCards.length !== 0 ?
           (courseCards) : (<p className="text-center p-4">No trending courses...</p>)
         }
