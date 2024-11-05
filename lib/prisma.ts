@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 declare global {
   // This prevents TypeScript from redeclaring the prisma variable in a global context

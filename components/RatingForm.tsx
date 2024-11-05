@@ -83,6 +83,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
         </Button>
         {isPending && <p className="mt-2 text-red-500">Submitting...</p>}
         {error ? <p className="mt-2 text-red-500">An error occurred. Please try again later.</p> : null}
+        {error ? <p className="mt-2 text-red-500">{JSON.stringify(error)}</p> : null}
       </form>
     </div>
   );

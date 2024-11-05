@@ -221,3 +221,51 @@ export async function getCourseRatings(courseId: string) {
   });
   return ratings;
 }
+
+/**
+ * Function to get the top 5 trending courses
+ * 
+ * @returns The top 5 trending courses
+ */
+export async function getTrendingCourses() {
+  const coursesWithRatings = await prisma.course.findMany({
+    where: {
+      ratings: {
+        some: {
+          createdAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
+          }
+        }
+      }
+    },
+    include: {
+      ratings: {
+        where: {
+          createdAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // last 7 days
+          }
+        }// },
+        // select: {
+        //   rating: true,
+        //   createdAt: true,
+        // }
+      },
+      school: true,
+    }
+  });
+
+  const coursesWithRatios = coursesWithRatings.map((course) => {
+    const totalRating = course.ratings.reduce((acc, rating) => acc + rating.rating, 0);
+    const ratingCount = course.ratings.length;
+    const ratingRatio = ratingCount > 0 ? totalRating / ratingCount : 0;
+
+    return { course, ratingRatio };
+  });
+
+  const topCourses = coursesWithRatios
+    .sort((a, b) => b.ratingRatio - a.ratingRatio)
+    .slice(0, 5)
+    .map((entry) => entry.course);
+
+  return topCourses;
+}
