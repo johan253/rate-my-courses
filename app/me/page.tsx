@@ -1,7 +1,8 @@
 // pages/me.tsx (Server Component)
 "use server";
 
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/kysely";
+import { sql } from "kysely";
 
 import RatingCard from "@/components/RatingCard";
 import Button from "@/components/Button";
@@ -24,15 +25,24 @@ export default async function MePage() {
     );
   }
 
-  const userRatings = await prisma.rating.findMany({
-    where: { authorId: session.user.id },
-    include: {
-      course: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const userRatings = await db
+    .selectFrom("Rating")
+    .select([
+      "Rating.id",
+      "Rating.rating",
+      "Rating.review",
+      "Rating.createdAt",
+      "Rating.updatedAt",
+      "Rating.authorId",
+      "Rating.courseId",
+      sql`
+        json_build_object('id', "Course"."id", 'code', "Course"."code")
+      `.as("course"),
+    ])
+    .where("Rating.authorId", "=", session.user.id as string)
+    .innerJoin("Course", "Rating.courseId", "Course.id")
+    .orderBy("Rating.createdAt", "desc")
+    .execute();
 
   return (
     <main className="p-8">
@@ -48,7 +58,7 @@ export default async function MePage() {
                 <RatingCard key={rating.id} rating={rating} >
                   <a href={`/course/${rating.courseId}`}
                     className="hover:font-bold">
-                    {rating.course.code}
+                    {rating.course?.code}
                   </a>
                 </RatingCard>
               ))
