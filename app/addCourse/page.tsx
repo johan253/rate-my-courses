@@ -41,7 +41,19 @@ export default function AddCourseForm() {
       alert("Please select a school");
       return;
     }
-    const result = JSON.parse(await addCourse(selectedSchool.id, code));
+    // const result = JSON.parse(await addCourse(selectedSchool.id, code));
+    const result = JSON.parse(
+      await fetch("/api/course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          schoolId: selectedSchool.id,
+          code,
+        }),
+      }).then((res) => res.text())
+    );
     if (result.error) {
       setError(result.error);
       return;
@@ -49,7 +61,7 @@ export default function AddCourseForm() {
       setCode("");
       setSelectedSchool(null);
       setError(null);
-      router.push(`/course/${result.courseId}`);
+      router.push(`/course/${result.data.id}`);
     }
   };
   return (

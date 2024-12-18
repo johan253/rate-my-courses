@@ -1,7 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/kysely";
+import { sql } from "kysely";
 import CourseCard from "@/components/CourseCard";
 import Link from "next/link";
 
@@ -16,37 +17,44 @@ export default async function SearchPage({
   const courseBuffer = (searchParams.page as string) ? Number(searchParams.page) : 1;
   if (!query || courseBuffer < 1) redirect("/");
 
-  const totalCount = await prisma.course.count({
-    where: {
-      code: {
-        contains: query,
-      },
-    },
-  });
+  let totalCount = (await db
+    .selectFrom("Course")
+    .select((eb) => eb.fn.count<number>("id").as("count"))
+    .where("code", "ilike", `%${query}%`)
+    .executeTakeFirst())?.count;
+
+  if (!totalCount) totalCount = 0;
 
   const totalPages = Math.ceil(totalCount / COURSE_LOAD_AMOUNT);
 
   if (totalPages > 0 && courseBuffer > totalPages) redirect("/");
 
-  const results = await prisma.course.findMany({
-    where: {
-      code: {
-        contains: query,
-      },
-    },
-    include: {
-      school: true,
-    },
-    take: COURSE_LOAD_AMOUNT,
-    skip: COURSE_LOAD_AMOUNT * (courseBuffer - 1),
-  });
+  const results = await db
+    .selectFrom("Course")
+    .where("code", "ilike", `%${query}%`)
+    .innerJoin("School", "Course.schoolId", "School.id")
+    .select([
+      "Course.id",
+      "Course.code",
+      "Course.createdAt",
+      "Course.updatedAt",
+      "Course.schoolId",
+      "Course.authorId",
+      sql`
+        json_build_object('id', "School"."id", 'name', "School"."name", 'location', "School"."location")
+      `.as("school"),
+    ])
+    .limit(COURSE_LOAD_AMOUNT)
+    .offset(COURSE_LOAD_AMOUNT * (courseBuffer - 1))
+    .orderBy("Course.code")
+    .execute();
 
   const courseCards = results.map((course) => {
     return (
       <CourseCard
         key={course.id}
         course={course}
-        school={course.school}
+        school={course.school as any}
       />
     );
   });
