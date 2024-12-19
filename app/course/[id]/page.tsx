@@ -1,23 +1,61 @@
 "use server";
 
+import { db } from "@/lib/kysely";
+import { sql } from "kysely";
+
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
 import RatingCard from "@/components/RatingCard";
 import RatingForm from "@/components/RatingForm";
 import StarRating from "@/components/StarRating";
 import { auth } from "@/auth";
 
 export default async function CoursePage({ params }: { params: { id: string } }) {
-  const course = await prisma.course.findUnique({
-    where: { id: params.id },
-    include: {
-      school: true,
-      ratings: true,
-    },
-  });
+  const course = await db
+    .selectFrom("Course")
+    .innerJoin("School", "Course.schoolId", "School.id")
+    .innerJoin("Rating", "Course.id", "Rating.courseId")
+    .select([
+      "Course.id",
+      "Course.code",
+      "Course.schoolId",
+      "Course.authorId",
+      "Course.createdAt",
+      "Course.updatedAt",
+      sql`
+        json_build_object('id', "School".id, 'name', "School"."name", 'location', "School"."location")
+      `.as("school"),
+      sql`
+        json_agg(
+          json_build_object(
+            'id', "Rating".id, 
+            'rating', "Rating"."rating", 
+            'review', "Rating"."review", 
+            'courseId', "Rating"."courseId",
+            'authorId', "Rating"."authorId", 
+            'createdAt', "Rating"."createdAt",
+            'updatedAt', "Rating"."updatedAt")
+        )
+      `.as("ratings")
+    ])
+    .where("Course.id", "=", params.id)
+    .groupBy("Course.id")
+    .groupBy("School.id")
+    .executeTakeFirst();
+
   if (!course) {
     return notFound();
   }
+
+  course.ratings = course.ratings;
+  course.school = course.school as any;
+
+  // const course = await prisma.course.findUnique({
+  //   where: { id: params.id },
+  //   include: {
+  //     school: true,
+  //     ratings: true,
+  //   },
+  // });
 
   const userId = (await auth())?.user?.id || null;
 
