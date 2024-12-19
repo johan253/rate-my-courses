@@ -13,7 +13,7 @@ export default async function CoursePage({ params }: { params: { id: string } })
   const course = await db
     .selectFrom("Course")
     .innerJoin("School", "Course.schoolId", "School.id")
-    .innerJoin("Rating", "Course.id", "Rating.courseId")
+    .leftJoin("Rating", "Course.id", "Rating.courseId")
     .select([
       "Course.id",
       "Course.code",
@@ -25,15 +25,18 @@ export default async function CoursePage({ params }: { params: { id: string } })
         json_build_object('id', "School".id, 'name', "School"."name", 'location', "School"."location")
       `.as("school"),
       sql`
-        json_agg(
-          json_build_object(
-            'id', "Rating".id, 
-            'rating', "Rating"."rating", 
-            'review', "Rating"."review", 
-            'courseId', "Rating"."courseId",
-            'authorId', "Rating"."authorId", 
-            'createdAt', "Rating"."createdAt",
-            'updatedAt', "Rating"."updatedAt")
+        COALESCE(
+          json_agg(
+            json_build_object(
+                'id', "Rating"."id", 
+                'rating', "Rating"."rating", 
+                'review', "Rating"."review", 
+                'courseId', "Rating"."courseId",
+                'authorId', "Rating"."authorId", 
+                'createdAt', "Rating"."createdAt",
+                'updatedAt', "Rating"."updatedAt"
+            )
+          ) FILTER (WHERE "Rating"."id" IS NOT NULL), '[]'::json
         )
       `.as("ratings")
     ])
@@ -45,17 +48,6 @@ export default async function CoursePage({ params }: { params: { id: string } })
   if (!course) {
     return notFound();
   }
-
-  course.ratings = course.ratings;
-  course.school = course.school as any;
-
-  // const course = await prisma.course.findUnique({
-  //   where: { id: params.id },
-  //   include: {
-  //     school: true,
-  //     ratings: true,
-  //   },
-  // });
 
   const userId = (await auth())?.user?.id || null;
 

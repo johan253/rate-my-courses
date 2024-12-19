@@ -1,22 +1,41 @@
 "use client";
 import type { Rating } from "@prisma/client";
-import { useActionState, useState, useEffect } from "react";
-import { deleteRating } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
-import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
 import StarRating from "@/components/StarRating";
 
 export default function RatingCard({ rating, children }: { rating: Rating; children?: React.ReactNode; }) {
-  const [error, deleteAction, isPending] = useActionState(deleteRating, null);
+  // const [error, deleteAction, isPending] = useActionState(deleteRating, null);
+  const [error, setError] = useState(null);
+  const [isPending, setIsPending] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    getSession().then((res) => setSession(res));
+    // getSession().then((res) => setSession(res));
+    fetch("/api/session")
+      .then((res) => res.json())
+      .then((s) => setSession(s));
   }, []);
 
-  const handleDelete = () => {
-    deleteAction(rating);
+  const handleDelete = async () => {
+    setIsPending(true);
+    fetch(`/api/rating/${rating.id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+        }
+      })
+      .catch((err) => setError(err))
+      .finally(() => {
+        setIsPending(false);
+        router.refresh();
+      });
   };
   return (
     <li className="bg-gray-50 p-4 rounded-lg shadow-sm w-full transform transition-transform hover:shadow-md">
