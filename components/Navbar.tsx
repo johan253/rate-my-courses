@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
 import Image from "next/image";
 import { FaUser } from "react-icons/fa6";
@@ -22,7 +21,9 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    getSession().then((res) => setSession(res));
+    fetch("/api/session")
+      .then((res) => res.json())
+      .then((data) => setSession(data));
   }, []);
   return (
     <nav className="px-4 bg-white">

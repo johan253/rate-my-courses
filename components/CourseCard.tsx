@@ -1,8 +1,9 @@
 "use server";
+import { db } from "@/lib/kysely";
+
 import Link from "next/link";
 import type { Course } from "@prisma/client";
 import type { School } from "@prisma/client";
-import prisma from "@/lib/prisma";
 import StarRating from "@/components/StarRating";
 
 export default async function CourseCard({
@@ -12,11 +13,13 @@ export default async function CourseCard({
   course: Course;
   school: School;
 }) {
-  const ratings = await prisma.rating.findMany({
-    where: {
-      courseId: course.id,
-    },
-  });
+  const ratings = await db
+    .selectFrom("Rating")
+    .selectAll()
+    .where("courseId", "=", course.id)
+    .groupBy("id")
+    .execute();
+
   const averageRating =
     ratings.length > 0
       ? (ratings.reduce((acc, rating) => acc + rating.rating, 0) /
