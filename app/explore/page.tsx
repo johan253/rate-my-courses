@@ -1,5 +1,5 @@
 import { db } from "@/lib/kysely";
-import type { School } from "@/lib/types";
+import type { Course, School } from "@/lib/types";
 import { sql } from "kysely";
 
 import CourseCard from "@/components/CourseCard";
@@ -34,7 +34,7 @@ export default async function ExplorePage() {
 
   const courseCards = trendingCourses.map((course) => (
     <CourseCard key={course.id} course={course} school={course.school} />
-  ));
+  )) || [];
 
   return (
     <main className="p-12">

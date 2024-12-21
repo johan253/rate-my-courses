@@ -10,7 +10,7 @@ export async function GET(req: Request) {
 
   if (!query) {
     return Response.json({
-      error: "No query provided",
+      error: "No query 'q' provided",
     }, { status: 400 });
   }
 

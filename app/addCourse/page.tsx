@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
 import type { School } from "@/lib/types";
-import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
 
 export default function AddCourseForm() {
@@ -16,7 +15,9 @@ export default function AddCourseForm() {
   const router = useRouter();
 
   useEffect(() => {
-    getSession().then((session) => setSession(session));
+    fetch("/api/auth/session")
+      .then((res) => res.json())
+      .then((data) => setSession(data));
   }, []);
 
   if (!session?.user) {

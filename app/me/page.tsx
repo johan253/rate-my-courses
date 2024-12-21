@@ -2,7 +2,7 @@
 "use server";
 
 import { db } from "@/lib/kysely";
-import type { Course } from "@/lib/types";
+import type { Course, Rating } from "@/lib/types";
 import { sql } from "kysely";
 
 import RatingCard from "@/components/RatingCard";

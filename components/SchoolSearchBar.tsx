@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getSchools } from "@/lib/actions";
 import type { School } from "@/lib/types";
 
 // eslint-disable-next-line no-unused-vars
@@ -25,7 +24,9 @@ export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (s
   const searchSchools = async (query: string) => {
     setLoading(true);
     try {
-      const response = await getSchools(query);
+      const response = await fetch(`/api/school?q=${query}`)
+        .then((res) => res.json())
+        .then((data) => data.data);
       setSchools(response);
     } catch (error) {
       setSchools([]);
