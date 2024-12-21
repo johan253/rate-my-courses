@@ -1,32 +1,72 @@
 "use client";
 
-import { useActionState, useState, useEffect } from "react";
-import { createRating, getCourseRatings } from "@/lib/actions";
+import type { Rating } from "@/lib/types";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import AuthModal from "@/components/AuthModal";
 
 export default function RatingForm({ courseId, authorId }: { courseId: string; authorId: string | null}) {
-  // Using useActionState to manage the action and loading state
-  const [error, submit, isPending] = useActionState(createRating, null);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(!authorId);
   const [alreadyRated, setAlreadyRated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (!authorId) {
       setIsModalOpen(true);
     }
     else {
-      getCourseRatings(courseId).then((ratings) => {
-        if (
-          ratings.some((rating) => {
-            return rating.authorId === authorId;
-          })
-        ) {
-          setAlreadyRated(true);
-        }
-      });
+      fetch(`/api/course/${courseId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+          }
+          else {
+            if (
+              data.data.ratings.some((rating: Rating) => {
+                return rating.authorId === authorId;
+              })
+            ) {
+              setAlreadyRated(true);
+            }
+          }
+        })
+        .catch((error) => setError(error));
     }
   }, [authorId, courseId]);
+
+  const submit = async (data: FormData) => {
+    setIsPending(true);
+    await fetch("/api/rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        courseId,
+        authorId,
+        rating: data.get("rating"),
+        review: data.get("review"),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+        }
+        else {
+          setAlreadyRated(true);
+        }
+      })
+      .finally(() => {
+        setIsPending(false);
+        router.refresh();
+      });
+  };
+
   return (
     <div className="relative">
       <AuthModal isOpen={isModalOpen} message="You need to sign in to leave a review."/>
