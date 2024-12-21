@@ -40,7 +40,7 @@ export default function RatingForm({ courseId, authorId }: { courseId: string; a
       <form action={(data) => {
         if (!authorId) return;
         data.append("courseId", courseId);
-        data.append("authorId", authorId as string);
+        data.append("authorId", authorId);
         submit(data);
       }
       } className="bg-white shadow-lg rounded-lg p-6 mt-6">

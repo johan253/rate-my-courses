@@ -1,5 +1,5 @@
 "use client";
-import type { Rating } from "@prisma/client";
+import type { Rating } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
@@ -55,7 +55,7 @@ export default function RatingCard({ rating, children }: { rating: Rating; child
       </div>
       <p>{rating.review}</p>
       <p className="text-gray-500 text-sm mt-2">
-        {new Date(rating.createdAt).toLocaleDateString()}
+        {new Date(rating.createdAt as any).toLocaleDateString()}
       </p>
       {error ? <p className="text-red-500">An Error has occured deleting this rating. Please try again later.</p> : null}
     </li>

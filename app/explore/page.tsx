@@ -1,11 +1,12 @@
 import { db } from "@/lib/kysely";
+import type { School } from "@/lib/types";
 import { sql } from "kysely";
 
 import CourseCard from "@/components/CourseCard";
 
 export default async function ExplorePage() {
-
-  const trendingCourses = await db
+  // @ts-ignore
+  const trendingCourses: (Course & {school: School, rating_ratio: number})[] = await db
     .selectFrom("Course")
     .innerJoin("School", "Course.schoolId", "School.id")
     .innerJoin("Rating", "Course.id", "Rating.courseId")
@@ -16,10 +17,10 @@ export default async function ExplorePage() {
       "Course.createdAt",
       "Course.schoolId",
       "Course.authorId",
-      sql`
+      sql<School>`
         json_build_object('id', "School".id, 'name', "School"."name", 'location', "School"."location")
       `.as("school"),
-      sql`
+      sql<number>`
         avg("Rating".rating)
       `.as("rating_ratio"),
     ])
@@ -32,7 +33,7 @@ export default async function ExplorePage() {
     .execute();
 
   const courseCards = trendingCourses.map((course) => (
-    <CourseCard key={course.id} course={course} school={course.school as any} />
+    <CourseCard key={course.id} course={course} school={course.school} />
   ));
 
   return (

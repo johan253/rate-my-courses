@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { db } from "@/lib/kysely";
+import type { Course, School } from "@/lib/types";
 import { sql } from "kysely";
 import CourseCard from "@/components/CourseCard";
 import Link from "next/link";
@@ -29,7 +30,8 @@ export default async function SearchPage({
 
   if (totalPages > 0 && courseBuffer > totalPages) redirect("/");
 
-  const results = await db
+  // @ts-ignore
+  const results: (Course & {school: School})[] = await db
     .selectFrom("Course")
     .where("code", "ilike", `%${query}%`)
     .innerJoin("School", "Course.schoolId", "School.id")
@@ -40,7 +42,7 @@ export default async function SearchPage({
       "Course.updatedAt",
       "Course.schoolId",
       "Course.authorId",
-      sql`
+      sql<School>`
         json_build_object('id', "School"."id", 'name', "School"."name", 'location', "School"."location")
       `.as("school"),
     ])
@@ -54,7 +56,7 @@ export default async function SearchPage({
       <CourseCard
         key={course.id}
         course={course}
-        school={course.school as any}
+        school={course.school}
       />
     );
   });

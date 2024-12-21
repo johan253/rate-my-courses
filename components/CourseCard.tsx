@@ -2,8 +2,7 @@
 import { db } from "@/lib/kysely";
 
 import Link from "next/link";
-import type { Course } from "@prisma/client";
-import type { School } from "@prisma/client";
+import type { Course, School } from "@/lib/types";
 import StarRating from "@/components/StarRating";
 
 export default async function CourseCard({

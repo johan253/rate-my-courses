@@ -2,6 +2,7 @@
 "use server";
 
 import { db } from "@/lib/kysely";
+import type { Course } from "@/lib/types";
 import { sql } from "kysely";
 
 import RatingCard from "@/components/RatingCard";
@@ -24,8 +25,8 @@ export default async function MePage() {
       </main>
     );
   }
-
-  const userRatings = await db
+  // @ts-ignore
+  const userRatings: (Rating & {course: Course})[] = await db
     .selectFrom("Rating")
     .select([
       "Rating.id",
@@ -35,11 +36,11 @@ export default async function MePage() {
       "Rating.updatedAt",
       "Rating.authorId",
       "Rating.courseId",
-      sql`
+      sql<Course>`
         json_build_object('id', "Course"."id", 'code', "Course"."code")
       `.as("course"),
     ])
-    .where("Rating.authorId", "=", session.user.id as string)
+    .where("Rating.authorId", "=", session.user.id || "")
     .innerJoin("Course", "Rating.courseId", "Course.id")
     .orderBy("Rating.createdAt", "desc")
     .execute();
@@ -58,7 +59,7 @@ export default async function MePage() {
                 <RatingCard key={rating.id} rating={rating} >
                   <a href={`/course/${rating.courseId}`}
                     className="hover:font-bold">
-                    {rating.course?.code}
+                    {rating.course.code}
                   </a>
                 </RatingCard>
               ))

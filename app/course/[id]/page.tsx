@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/kysely";
+import type { Course, Rating, School } from "@/lib/types";
 import { sql } from "kysely";
 
 import { notFound } from "next/navigation";
@@ -10,7 +11,8 @@ import StarRating from "@/components/StarRating";
 import { auth } from "@/auth";
 
 export default async function CoursePage({ params }: { params: { id: string } }) {
-  const course = await db
+  // @ts-ignore
+  const course: undefined | Course & {ratings: Rating[], school: School} = await db
     .selectFrom("Course")
     .innerJoin("School", "Course.schoolId", "School.id")
     .leftJoin("Rating", "Course.id", "Rating.courseId")
@@ -21,10 +23,10 @@ export default async function CoursePage({ params }: { params: { id: string } })
       "Course.authorId",
       "Course.createdAt",
       "Course.updatedAt",
-      sql`
+      sql<School>`
         json_build_object('id', "School".id, 'name', "School"."name", 'location', "School"."location")
       `.as("school"),
-      sql`
+      sql<Rating[]>`
         COALESCE(
           json_agg(
             json_build_object(

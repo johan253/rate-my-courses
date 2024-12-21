@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getSchools } from "@/lib/actions";
-import type { School } from "@prisma/client";
+import type { School } from "@/lib/types";
 
 // eslint-disable-next-line no-unused-vars
 export default function SchoolSearchBar({ onSelectSchool }: { onSelectSchool: (school: School | null) => void }) {

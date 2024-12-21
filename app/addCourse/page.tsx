@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
-import type { School } from "@prisma/client";
+import type { School } from "@/lib/types";
 import { getSession } from "@/lib/actions";
 import { Session } from "next-auth";
 
