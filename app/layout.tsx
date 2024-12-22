@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SessionProvider } from "@/components/SessionContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +20,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + " bg-orange-100 text-black flex flex-col min-h-screen"}>
-        <Navbar />
-        <section className="flex-grow flex flex-col justify-center">
-          {
-            children
-          }
-        </section>
-        
-        <Footer />
+        <SessionProvider>
+          <Navbar />
+          <section className="flex-grow flex flex-col justify-center">
+            {
+              children
+            }
+          </section>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );

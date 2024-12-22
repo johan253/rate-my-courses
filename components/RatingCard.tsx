@@ -1,7 +1,8 @@
 "use client";
 import type { Rating } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useSession } from "./SessionContext";
+import { useState } from "react";
 import { FaTrashCan, FaCircleNotch } from "react-icons/fa6";
 import { Session } from "next-auth";
 import StarRating from "@/components/StarRating";
@@ -10,15 +11,8 @@ export default function RatingCard({ rating, children }: { rating: Rating; child
   // const [error, deleteAction, isPending] = useActionState(deleteRating, null);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
+  const { session }: {session: Session | null} = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    // getSession().then((res) => setSession(res));
-    fetch("/api/session")
-      .then((res) => res.json())
-      .then((s) => setSession(s));
-  }, []);
 
   const handleDelete = async () => {
     setIsPending(true);

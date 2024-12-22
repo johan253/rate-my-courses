@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/components/SessionContext";
 import Button from "@/components/Button";
 import SchoolSearchBar from "@/components/SchoolSearchBar";
 import type { School } from "@/lib/types";
@@ -11,14 +12,8 @@ export default function AddCourseForm() {
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const { session }: { session: Session | null } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    fetch("/api/auth/session")
-      .then((res) => res.json())
-      .then((data) => setSession(data));
-  }, []);
 
   if (!session?.user) {
     return (

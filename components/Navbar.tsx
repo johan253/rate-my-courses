@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "./SessionContext";
 import Link from "next/link";
 import { Session } from "next-auth";
 import Image from "next/image";
@@ -9,7 +10,7 @@ import { FaUser } from "react-icons/fa6";
 
 export default function Navbar() {
   const [query, setQuery] = useState("");
-  const [session, setSession] = useState<Session | null>(null);
+  const { session }: {session: Session | null} = useSession();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -20,11 +21,6 @@ export default function Navbar() {
     }
   };
 
-  useEffect(() => {
-    fetch("/api/session")
-      .then((res) => res.json())
-      .then((data) => setSession(data));
-  }, []);
   return (
     <nav className="px-4 bg-white">
       <div className="flex flex-col sm:flex-row mx-auto justify-between items-center text-nowrap">
