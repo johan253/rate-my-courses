@@ -1,5 +1,7 @@
 "use server";
 
+export const dynamic = "force-dynamic";
+
 import { db } from "@/lib/kysely";
 import type { Course, School } from "@/lib/types";
 import { sql } from "kysely";
