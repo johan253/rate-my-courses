@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/lib/kysely";
 import type { Course, School } from "@/lib/types";
 import { sql } from "kysely";
