@@ -17,30 +17,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Read and increment version
-        id: version
-        run: |
-          version=$(cat version.txt)
-          major=$(echo $version | cut -d. -f1)
-          minor=$(echo $version | cut -d. -f2)
-          patch=$(echo $version | cut -d. -f3)
-          new_patch=$((patch + 1))
-          new_version="$major.$minor.$new_patch"
-          echo $new_version > version.txt
-          echo "VERSION=$new_version" >> $GITHUB_ENV
-      - name: Commit updated version
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git checkout master
-          git add version.txt
-          git commit -m "Bump version to $VERSION"
-          git push origin master
-      - name: Build and tag Docker image
-        run: |
-          docker build -t johan253/ratemycourses:latest .
-          docker tag johan253/ratemycourses:latest johan253/ratemycourses:$VERSION
-      - name: Push Docker Images
-        run: |
-          docker push johan253/ratemycourses:latest
-          docker push johan253/ratemycourses:$VERSION
+      - name: Build and push to Dockerhub
+        uses: docker/build-push-action@v5
+        with:
+          context:
+          push: true
+          tags: johan253/ratemycourses:latest
