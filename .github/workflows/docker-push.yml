@@ -32,6 +32,7 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
+          git checkout master
           git add version.txt
           git commit -m "Bump version to $VERSION"
           git push origin master
