@@ -34,7 +34,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add version.txt
           git commit -m "Bump version to $VERSION"
-          git push origin main
+          git push origin master
       - name: Build and tag Docker image
         run: |
           docker build -t johan253/ratemycourses:latest .
