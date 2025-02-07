@@ -1,10 +1,10 @@
-"use server";
-
 import { db } from "@/lib/kysely";
 import type { Course, School } from "@/lib/types";
 import { sql } from "kysely";
 
 import CourseCard from "@/components/CourseCard";
+
+export const dynamic = "force-dynamic";
 
 export default async function ExplorePage() {
   // @ts-ignore
