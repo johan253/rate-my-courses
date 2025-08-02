@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rmc-nextjs
+  namespace: ratemycourses
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rmc-nextjs
+  template:
+    metadata:
+      labels:
+        app: rmc-nextjs
+    spec:
+      containers:
+        - name: nextjs
+          image: ghcr.io/johan253/ratemycourses:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: rmc-env
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rmc-nextjs
+  namespace: ratemycourses
+spec:
+  selector:
+    app: rmc-nextjs
+  ports:
+    - port: 3000
+      targetPort: 3000
