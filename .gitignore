@@ -38,3 +38,6 @@ next-env.d.ts
 
 # visual studio code
 .vscode
+
+# helm chart
+*.tgz

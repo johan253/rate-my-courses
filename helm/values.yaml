@@ -1,0 +1,53 @@
+replicaCount: 1
+image:
+  repository: ghcr.io/johan253/ratemycourses
+  tag: latest
+  pullPolicy: Always
+containerPort: 3000
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+service:
+  type: ClusterIP
+  port: 3000
+ingress:
+  enabled: false
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-http"
+  hosts:
+    - ratemycourses.net
+  tls:
+    secretName: ratemycourses-tls
+env: {}
+  # # Add any additional environment variables here
+  # - name: DATABASE_URL
+  #   value: postgres://user:password@postgres-rw.postgres:5432/ratemycourses
+secret:
+  name: ratemycourses-env
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  data:
+    - secretKey: AUTH_GOOGLE_ID
+      remoteRef:
+        key: /ratemycourses/auth/google/id
+    - secretKey: AUTH_GOOGLE_SECRET
+      remoteRef:
+        key: /ratemycourses/auth/google/secret
+    - secretKey: AUTH_SECRET
+      remoteRef:
+        key: /ratemycourses/auth/secret
+    - secretKey: AUTH_TRUST_HOST
+      remoteRef:
+        key: /ratemycourses/auth/trust_host
+    - secretKey: DATABASE_URL
+      remoteRef:
+        key: /ratemycourses/database/url
+    - secretKey: NEXTAUTH_URL
+      remoteRef:
+        key: /ratemycourses/url
